@@ -1,5 +1,7 @@
 package com.myGame.engine.entities;
 
+import com.myGame.engine.entities.RectHitbox;
+
 public class CircleHitbox extends Hitbox {
     private float radius;
 
@@ -10,7 +12,12 @@ public class CircleHitbox extends Hitbox {
 
     @Override
     public boolean collidesWith(Hitbox other) {
-        // Placeholder
+        if (other instanceof CircleHitbox) {
+            return com.myGame.engine.physics.CollisionDetector.checkCircleCircle(this, (CircleHitbox) other);
+        }
+        if (other instanceof RectHitbox) {
+            return com.myGame.engine.physics.CollisionDetector.checkCircleRect(this, (RectHitbox) other);
+        }
         return false;
     }
 

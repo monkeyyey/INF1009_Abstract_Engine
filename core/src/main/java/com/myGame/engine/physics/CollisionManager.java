@@ -1,12 +1,13 @@
 package com.myGame.engine.physics;
 
+import com.myGame.engine.core.Collidable;
 import com.myGame.engine.entities.Entity;
 import java.util.List;
 
 public class CollisionManager {
-    private List<Entity> collidables;
+    private List<Collidable> collidables;
 
-    public void setCollidables(List<Entity> collidables) {
+    public void setCollidables(List<Collidable> collidables) {
         this.collidables = collidables;
     }
 
@@ -14,10 +15,15 @@ public class CollisionManager {
         if(collidables == null) return;
         for (int i = 0; i < collidables.size(); i++) {
             for (int j = i + 1; j < collidables.size(); j++) {
-                Entity a = collidables.get(i);
-                Entity b = collidables.get(j);
-                // In real code, check CollisionDetector here
-                resolve(a, b);
+                Collidable a = collidables.get(i);
+                Collidable b = collidables.get(j);
+                Entity ea = (Entity) a;
+                Entity eb = (Entity) b;
+                if (!ea.isActive() || !eb.isActive()) continue;
+                if (a.getHitbox() != null && b.getHitbox() != null
+                        && a.getHitbox().collidesWith(b.getHitbox())) {
+                    resolve(ea, eb);
+                }
             }
         }
     }
