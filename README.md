@@ -9,9 +9,8 @@ This is a libGDX project with a small abstract engine layer and two demo scenes.
   - `src/main/java/com/myGame/game/` -> Demo/game-specific logic
   - `src/main/java/com/myGame/GameEngine.java` -> Application entry point and scene switching
 - `assets/` -> Textures and assets used by demos
-- `lwjgl3/` -> Desktop launcher and platform config
 
-## Abstract Engine (Reusable)
+## Abstract Engine Portion
 
 These classes form the generic engine layer. They are not tied to a specific demo.
 
