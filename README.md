@@ -16,17 +16,17 @@ These classes form the generic engine layer. They are not tied to a specific dem
 
 ### Core Interfaces
 - `core/src/main/java/com/myGame/engine/core/Collidable.java`
-  - Contract for objects that can collide; exposes `getHitbox`, `setHitbox`, `onCollision`.
+  - Interface for objects that can collide; exposes `getHitbox`, `setHitbox`, `onCollision`.
 - `core/src/main/java/com/myGame/engine/core/Movable.java`
-  - Contract for objects that can move; exposes velocity and `updatePosition`.
+  - Interface for objects that can move; exposes velocity and `updatePosition`.
 - `core/src/main/java/com/myGame/engine/core/InputSource.java`
-  - Contract for input polling.
+  - Interface for input polling.
 - `core/src/main/java/com/myGame/engine/core/InputState.java`
   - Data container for input states (up/down/left/right/action).
 
 ### Entities and Hitboxes
 - `core/src/main/java/com/myGame/engine/entities/Entity.java`
-  - Base entity with position, lifecycle, and drawing interface.
+  - Base Abstract entity with position, lifecycle, and drawing interface.
 - `core/src/main/java/com/myGame/engine/entities/MovableEntity.java`
   - Abstract entity that is both `Movable` and `Collidable`; owns hitbox and velocity.
 - `core/src/main/java/com/myGame/engine/entities/Hitbox.java`
