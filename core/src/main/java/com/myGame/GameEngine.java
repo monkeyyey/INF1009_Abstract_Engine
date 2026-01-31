@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.myGame.engine.managers.InputManager;
 import com.myGame.engine.managers.SceneManager;
 import com.myGame.engine.scenes.Scene;
-import com.myGame.game.scenes.CircleArenaScene;
-import com.myGame.game.scenes.DemoScene;
+import com.myGame.game.scenes.DemoScene1;
+import com.myGame.game.scenes.DemoScene2;
 import com.myGame.game.scenes.PauseScene;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -27,7 +27,7 @@ public class GameEngine extends ApplicationAdapter {
         shape = new ShapeRenderer();
         inputManager = new InputManager();
         sceneManager = new SceneManager();
-        sceneManager.setScene(new DemoScene(inputManager));
+        sceneManager.setScene(new DemoScene1(inputManager));
     }
 
     @Override
@@ -62,9 +62,9 @@ public class GameEngine extends ApplicationAdapter {
         if (!paused && Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
             demoActive = !demoActive;
             if (demoActive) {
-                sceneManager.setScene(new DemoScene(inputManager));
+                sceneManager.setScene(new DemoScene1(inputManager));
             } else {
-                sceneManager.setScene(new CircleArenaScene(inputManager));
+                sceneManager.setScene(new DemoScene2(inputManager));
             }
         }
     }

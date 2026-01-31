@@ -15,7 +15,7 @@ import com.myGame.game.input.KeyboardWASDInputSource;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CircleArenaScene extends Scene {
+public class DemoScene2 extends Scene {
     private final InputManager inputManager;
     private final int arrowPlayerId = 0;
     private final int wasdPlayerId = 1;
@@ -23,7 +23,7 @@ public class CircleArenaScene extends Scene {
     private PlayerCircle wasdPlayer;
     private final List<RectangleWall> rects = new ArrayList<>();
 
-    public CircleArenaScene(InputManager inputManager) {
+    public DemoScene2(InputManager inputManager) {
         super();
         this.inputManager = inputManager;
     }

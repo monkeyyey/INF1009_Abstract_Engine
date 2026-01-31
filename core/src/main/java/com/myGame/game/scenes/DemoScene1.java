@@ -15,7 +15,7 @@ import com.myGame.game.input.KeyboardWASDInputSource;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DemoScene extends Scene {
+public class DemoScene1 extends Scene {
     private final InputManager inputManager;
     private final int bucketPlayerId = 0;
     private final int windPlayerId = 1;
@@ -25,7 +25,7 @@ public class DemoScene extends Scene {
     private static final float DROPLET_FALL_SPEED = -200f;
     private static final float WIND_PUSH_SPEED = 140f;
 
-    public DemoScene(InputManager inputManager) {
+    public DemoScene1(InputManager inputManager) {
         super();
         this.inputManager = inputManager;
     }
