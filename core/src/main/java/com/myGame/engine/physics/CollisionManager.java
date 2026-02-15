@@ -2,34 +2,40 @@ package com.myGame.engine.physics;
 
 import com.myGame.engine.core.Collidable;
 import com.myGame.engine.entities.Entity;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class CollisionManager {
-    private List<Collidable> collidables;
+    public void update(float dt, Collection<Entity> entities) {
+        if (entities == null || entities.isEmpty()) return;
 
-    public void setCollidables(List<Collidable> collidables) {
-        this.collidables = collidables;
-    }
+        List<Entity> all = new ArrayList<>(entities);
+        for (int i = 0; i < all.size(); i++) {
+            Entity ea = all.get(i);
+            if (!ea.isActive() || !(ea instanceof Collidable)) continue;
 
-    public void update(float dt) {
-        if(collidables == null) return;
-        for (int i = 0; i < collidables.size(); i++) {
-            for (int j = i + 1; j < collidables.size(); j++) {
-                Collidable a = collidables.get(i);
-                Collidable b = collidables.get(j);
-                Entity ea = (Entity) a;
-                Entity eb = (Entity) b;
-                if (!ea.isActive() || !eb.isActive()) continue;
-                if (a.getHitbox() != null && b.getHitbox() != null
-                        && a.getHitbox().collidesWith(b.getHitbox())) {
-                    resolve(ea, eb);
+            Collidable a = (Collidable) ea;
+            if (a.getHitbox() == null) continue;
+
+            for (int j = i + 1; j < all.size(); j++) {
+                Entity eb = all.get(j);
+                if (!eb.isActive() || !(eb instanceof Collidable)) continue;
+
+                Collidable b = (Collidable) eb;
+                if (b.getHitbox() == null) continue;
+
+                if (CollisionDetector.overlaps(
+                        a.getHitbox(), ea.getX(), ea.getY(),
+                        b.getHitbox(), eb.getX(), eb.getY())) {
+                    resolve(a, ea, b, eb);
                 }
             }
         }
     }
 
-    public void resolve(Entity a, Entity b) {
-        a.onCollision(b);
-        b.onCollision(a);
+    public void resolve(Collidable a, Entity ea, Collidable b, Entity eb) {
+        a.onCollision(eb);
+        b.onCollision(ea);
     }
 }

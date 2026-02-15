@@ -43,13 +43,13 @@ public class Wind extends MovableTextureObject {
         if (clampedX != getX() || clampedY != getY()) {
             setX(clampedX);
             setY(clampedY);
-            getHitbox().setX(clampedX);
-            getHitbox().setY(clampedY);
         }
     }
 
     @Override
     public void onCollision(Entity other) {
-        // Wind uses manual interaction logic in the scene
+        if (other instanceof Droplet) {
+            ((Droplet) other).applyWindCollision(this);
+        }
     }
 }

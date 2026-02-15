@@ -1,28 +1,39 @@
 package com.myGame.game.entities;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.myGame.engine.core.Collidable;
 import com.myGame.engine.core.InputState;
+import com.myGame.engine.core.Movable;
+import com.myGame.engine.entities.CircleHitbox;
 import com.myGame.engine.entities.Entity;
+import com.myGame.engine.entities.Hitbox;
 
-public class PlayerCircle extends MovableCircle {
+public class PlayerCircle extends Entity implements Collidable, Movable {
+    private final float radius;
     private final float speed;
     private final float minX;
     private final float maxX;
     private final float minY;
     private final float maxY;
     private final Color color;
+    private Hitbox hitbox;
+    private float vx;
+    private float vy;
+    private float previousX;
+    private float previousY;
 
     public PlayerCircle(float x, float y, float radius, float speed,
                         float minX, float maxX, float minY, float maxY, Color color) {
-        super(x, y, radius);
+        super(x, y);
+        this.radius = radius;
         this.speed = speed;
         this.minX = minX;
         this.maxX = maxX;
         this.minY = minY;
         this.maxY = maxY;
         this.color = color;
+        this.hitbox = new CircleHitbox(radius);
     }
 
     public void applyInput(InputState input) {
@@ -38,7 +49,10 @@ public class PlayerCircle extends MovableCircle {
 
     @Override
     public void updatePosition(float dt) {
-        super.updatePosition(dt);
+        previousX = x;
+        previousY = y;
+        x += vx * dt;
+        y += vy * dt;
         float r = getRadius();
         float clampedX = getX();
         float clampedY = getY();
@@ -49,19 +63,47 @@ public class PlayerCircle extends MovableCircle {
         if (clampedX != getX() || clampedY != getY()) {
             setX(clampedX);
             setY(clampedY);
-            getHitbox().setX(clampedX);
-            getHitbox().setY(clampedY);
         }
     }
 
     @Override
-    public void draw(SpriteBatch batch, ShapeRenderer shape) {
+    public void draw(ShapeRenderer shape) {
         shape.setColor(color);
         shape.circle(getX(), getY(), getRadius());
     }
 
     @Override
     public void onCollision(Entity other) {
-        // No-op for player in this scene
+        if (other instanceof RectangleWall) {
+            setX(previousX);
+            setY(previousY);
+            setVelocityX(0f);
+            setVelocityY(0f);
+        }
+    }
+
+    @Override
+    public Hitbox getHitbox() { return hitbox; }
+
+    @Override
+    public void setHitbox(Hitbox hitbox) { this.hitbox = hitbox; }
+
+    @Override
+    public float getVelocityX() { return vx; }
+
+    @Override
+    public void setVelocityX(float vx) { this.vx = vx; }
+
+    @Override
+    public float getVelocityY() { return vy; }
+
+    @Override
+    public void setVelocityY(float vy) { this.vy = vy; }
+
+    public float getRadius() { return radius; }
+
+    @Override
+    public void dispose() {
+        // No resources to dispose.
     }
 }

@@ -5,12 +5,21 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SceneManager {
     private Deque<Scene> sceneStack = new ArrayDeque<>();
+    private Set<Scene> detachedScenes = new HashSet<>();
 
     public void setScene(Scene next) {
-        if(!sceneStack.isEmpty()) sceneStack.pop().dispose();
+        if (!sceneStack.isEmpty()) {
+            Scene current = sceneStack.pop();
+            current.onExit();
+            if (current != next) {
+                detachedScenes.add(current);
+            }
+        }
         sceneStack.push(next);
         next.onEnter();
     }
@@ -39,6 +48,12 @@ public class SceneManager {
     }
 
     public void dispose() {
-        while(!sceneStack.isEmpty()) sceneStack.pop().dispose();
+        Set<Scene> allScenes = new HashSet<>(detachedScenes);
+        allScenes.addAll(sceneStack);
+        for (Scene scene : allScenes) {
+            scene.dispose();
+        }
+        sceneStack.clear();
+        detachedScenes.clear();
     }
 }

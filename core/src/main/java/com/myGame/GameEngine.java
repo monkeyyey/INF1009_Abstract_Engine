@@ -19,6 +19,9 @@ public class GameEngine extends ApplicationAdapter {
     private ShapeRenderer shape;
     private SceneManager sceneManager;
     private InputManager inputManager;
+    private DemoScene1 demoScene1;
+    private DemoScene2 demoScene2;
+    private PauseScene pauseScene;
     private boolean demoActive = true;
 
     @Override
@@ -27,7 +30,13 @@ public class GameEngine extends ApplicationAdapter {
         shape = new ShapeRenderer();
         inputManager = new InputManager();
         sceneManager = new SceneManager();
-        sceneManager.setScene(new DemoScene1(inputManager));
+        demoScene1 = new DemoScene1(inputManager);
+        demoScene2 = new DemoScene2(inputManager);
+        pauseScene = new PauseScene(
+                inputManager,
+                () -> sceneManager.popScene(),
+                () -> Gdx.app.exit());
+        sceneManager.setScene(demoScene1);
     }
 
     @Override
@@ -52,19 +61,16 @@ public class GameEngine extends ApplicationAdapter {
         boolean paused = active instanceof PauseScene;
 
         if (!paused && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            sceneManager.pushScene(new PauseScene(() -> {
-                Scene popped = sceneManager.popScene();
-                if (popped != null) popped.dispose();
-            }, () -> Gdx.app.exit()));
+            sceneManager.pushScene(pauseScene);
             return;
         }
 
         if (!paused && Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
             demoActive = !demoActive;
             if (demoActive) {
-                sceneManager.setScene(new DemoScene1(inputManager));
+                sceneManager.setScene(demoScene1);
             } else {
-                sceneManager.setScene(new DemoScene2(inputManager));
+                sceneManager.setScene(demoScene2);
             }
         }
     }

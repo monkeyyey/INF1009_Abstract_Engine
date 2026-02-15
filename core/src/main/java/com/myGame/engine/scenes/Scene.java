@@ -21,10 +21,8 @@ public abstract class Scene {
     public abstract void onExit();
     
     public void update(float dt) {
-        collisionManager.setCollidables(entityManager.getCollidableEntities());
-        movementManager.setMovables(entityManager.getMovableEntities());
-        movementManager.update(dt);
-        collisionManager.update(dt);
+        movementManager.update(dt, entityManager.getEntities());
+        collisionManager.update(dt, entityManager.getEntities());
         entityManager.update(dt);
     }
 

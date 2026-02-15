@@ -6,21 +6,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InputManager {
-    private Map<Integer, InputSource> playerSources = new HashMap<>();
-    private Map<Integer, InputState> playerInputs = new HashMap<>();
+    private Map<Integer, InputSource> inputSources = new HashMap<>();
+    private Map<Integer, InputState> inputStates = new HashMap<>();
 
-    public void addPlayer(int id, InputSource source) {
-        playerSources.put(id, source);
-        playerInputs.put(id, new InputState());
+    public void addInputSource(int id, InputSource source) {
+        inputSources.put(id, source);
+        inputStates.put(id, new InputState());
+    }
+
+    public void removeInputSource(int id) {
+        inputSources.remove(id);
+        inputStates.remove(id);
     }
 
     public void update() {
-        for(Integer id : playerSources.keySet()) {
-            playerSources.get(id).updateState(playerInputs.get(id));
+        for(Integer id : inputSources.keySet()) {
+            inputSources.get(id).updateState(inputStates.get(id));
         }
     }
 
     public InputState getState(int id) {
-        return playerInputs.get(id);
+        return inputStates.get(id);
     }
 }

@@ -1,20 +1,19 @@
 package com.myGame.engine.managers;
 
 import com.myGame.engine.entities.Entity;
-import com.myGame.engine.core.Collidable;
-import com.myGame.engine.core.Movable;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 public class EntityManager {
-    private Map<String, Entity> entities = new HashMap<>();
+    private Map<String, Entity> entities = new LinkedHashMap<>();
 
     public void addEntity(String name, Entity entity) {
+        entity.setName(name);
         entities.put(name, entity);
     }
 
@@ -22,27 +21,8 @@ public class EntityManager {
         entities.remove(name);
     }
 
-    public List<Collidable> getCollidableEntities() {
-        List<Collidable> collidables = new ArrayList<>();
-        for(Entity e : entities.values()) {
-            if(e.isActive() && e instanceof Collidable) {
-                Collidable c = (Collidable) e;
-                if (c.getHitbox() != null) {
-                    collidables.add(c);
-                }
-            }
-        }
-        return collidables;
-    }
-
-    public List<Movable> getMovableEntities() {
-        List<Movable> movables = new ArrayList<>();
-        for (Entity e : entities.values()) {
-            if (e.isActive() && e instanceof Movable) {
-                movables.add((Movable) e);
-            }
-        }
-        return movables;
+    public Collection<Entity> getEntities() {
+        return Collections.unmodifiableCollection(entities.values());
     }
 
     public void update(float dt) {
@@ -56,10 +36,18 @@ public class EntityManager {
         }
     }
 
-    public void draw(SpriteBatch batch, ShapeRenderer shape) {
+    public void drawSprites(SpriteBatch batch) {
         for (Entity e : entities.values()) {
             if (e.isActive()) {
-                e.draw(batch, shape);
+                e.draw(batch);
+            }
+        }
+    }
+
+    public void drawShapes(ShapeRenderer shape) {
+        for (Entity e : entities.values()) {
+            if (e.isActive()) {
+                e.draw(shape);
             }
         }
     }

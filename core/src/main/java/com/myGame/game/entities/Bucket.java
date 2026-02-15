@@ -31,7 +31,6 @@ public class Bucket extends MovableTextureObject {
         if (clampedX > maxX) clampedX = maxX;
         if (clampedX != getX()) {
             setX(clampedX);
-            getHitbox().setX(clampedX);
         }
     }
 

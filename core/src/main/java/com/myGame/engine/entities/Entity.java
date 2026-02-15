@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public abstract class Entity {
     protected float x, y;
-    protected int id = -1; // -1 indicates unowned
+    protected String name; // null indicates unnamed
     protected boolean active = true;
 
     public Entity(float x, float y) {
@@ -13,8 +13,14 @@ public abstract class Entity {
         this.y = y;
     }
 
-    public abstract void draw(SpriteBatch batch, ShapeRenderer shape);
-    public abstract void onCollision(Entity other);
+    public void draw(SpriteBatch batch) {
+        // Default no-op for shape-only entities.
+    }
+
+    public void draw(ShapeRenderer shape) {
+        // Default no-op for texture-only entities.
+    }
+
     public abstract void dispose();
 
     // Getters and Setters
@@ -22,8 +28,8 @@ public abstract class Entity {
     public void setX(float x) { this.x = x; }
     public float getY() { return y; }
     public void setY(float y) { this.y = y; }
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
     public boolean isActive() { return active; }
     public void destroy() { this.active = false; }
 }

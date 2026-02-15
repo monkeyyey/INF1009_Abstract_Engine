@@ -1,7 +1,6 @@
 package com.myGame.game.entities;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.myGame.engine.core.Collidable;
 import com.myGame.engine.entities.Entity;
@@ -19,18 +18,20 @@ public class RectangleWall extends Entity implements Collidable {
         this.width = width;
         this.height = height;
         this.color = color;
-        this.hitbox = new RectHitbox(x, y, width, height);
+        this.hitbox = new RectHitbox(width, height);
     }
 
     @Override
-    public void draw(SpriteBatch batch, ShapeRenderer shape) {
+    public void draw(ShapeRenderer shape) {
         shape.setColor(color);
         shape.rect(x, y, width, height);
     }
 
     @Override
     public void onCollision(Entity other) {
-        // Color handled by scene logic
+        if (other instanceof PlayerCircle) {
+            setColor(Color.RED);
+        }
     }
 
     @Override

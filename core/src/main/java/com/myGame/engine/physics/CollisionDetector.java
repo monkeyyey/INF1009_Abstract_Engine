@@ -1,29 +1,49 @@
 package com.myGame.engine.physics;
 
 import com.myGame.engine.entities.CircleHitbox;
+import com.myGame.engine.entities.Hitbox;
 import com.myGame.engine.entities.RectHitbox;
 
 public class CollisionDetector {
-    public static boolean checkCircleCircle(CircleHitbox a, CircleHitbox b) {
-        float dx = a.getX() - b.getX();
-        float dy = a.getY() - b.getY();
+    public static boolean overlaps(Hitbox a, float ax, float ay, Hitbox b, float bx, float by) {
+        if (a instanceof CircleHitbox && b instanceof CircleHitbox) {
+            return checkCircleCircle((CircleHitbox) a, ax, ay, (CircleHitbox) b, bx, by);
+        }
+        if (a instanceof RectHitbox && b instanceof RectHitbox) {
+            return checkRectRect((RectHitbox) a, ax, ay, (RectHitbox) b, bx, by);
+        }
+        if (a instanceof CircleHitbox && b instanceof RectHitbox) {
+            return checkCircleRect((CircleHitbox) a, ax, ay, (RectHitbox) b, bx, by);
+        }
+        if (a instanceof RectHitbox && b instanceof CircleHitbox) {
+            return checkCircleRect((CircleHitbox) b, bx, by, (RectHitbox) a, ax, ay);
+        }
+        return false;
+    }
+
+    public static boolean checkCircleCircle(CircleHitbox a, float ax, float ay,
+                                            CircleHitbox b, float bx, float by) {
+        float dx = ax - bx;
+        float dy = ay - by;
         float r = a.getRadius() + b.getRadius();
         return (dx * dx + dy * dy) <= (r * r);
     }
 
-    public static boolean checkRectRect(RectHitbox a, RectHitbox b) {
-        return a.getX() < b.getX() + b.getWidth()
-            && a.getX() + a.getWidth() > b.getX()
-            && a.getY() < b.getY() + b.getHeight()
-            && a.getY() + a.getHeight() > b.getY();
+    public static boolean checkRectRect(RectHitbox a, float ax, float ay,
+                                        RectHitbox b, float bx, float by) {
+        return ax < bx + b.getWidth()
+            && ax + a.getWidth() > bx
+            && ay < by + b.getHeight()
+            && ay + a.getHeight() > by;
     }
 
-    public static boolean checkCircleRect(CircleHitbox a, RectHitbox b) {
-        float closestX = clamp(a.getX(), b.getX(), b.getX() + b.getWidth());
-        float closestY = clamp(a.getY(), b.getY(), b.getY() + b.getHeight());
-        float dx = a.getX() - closestX;
-        float dy = a.getY() - closestY;
-        return (dx * dx + dy * dy) <= (a.getRadius() * a.getRadius());
+    public static boolean checkCircleRect(CircleHitbox circle, float cx, float cy,
+                                          RectHitbox rect, float rx, float ry) {
+        float closestX = clamp(cx, rx, rx + rect.getWidth());
+        float closestY = clamp(cy, ry, ry + rect.getHeight());
+        float dx = cx - closestX;
+        float dy = cy - closestY;
+        return (dx * dx + dy * dy) <= (circle.getRadius() * circle.getRadius());
     }
 
     private static float clamp(float value, float min, float max) {
