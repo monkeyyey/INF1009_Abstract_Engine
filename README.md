@@ -1,50 +1,79 @@
 # INF1009 Abstract Engine Project
 
-A libGDX project with a reusable engine layer (`engine`) and game/demo layer (`game`).
+A libGDX game project organized into a reusable engine layer (`engine`) and game-specific layer (`game`).
 
 ## Project Structure
 
 - `core/src/main/java/com/myGame/engine/`
-  Engine abstractions (entities, managers, physics, scenes, core interfaces).
+  Engine abstractions: entities, managers, physics, scenes, and core contracts.
 - `core/src/main/java/com/myGame/game/`
-  Game/demo entities, scenes, input sources, and simple UI elements.
+  Game/demo entities, scenes, input sources, and UI entities.
 - `core/src/main/java/com/myGame/GameEngine.java`
-  Application entry point and global scene/input flow.
+  Application entry point and global scene/input/audio flow.
 - `assets/`
-  Textures and media assets used by scenes.
+  Textures and audio assets.
 
 ## Innovative Enhancements
 
-- Scene cycle orchestration in `SceneManager`
-  - `registerCycleScene(scene)` and `cycleScene()` allow cycling demo scenes without hardcoding toggle state in `GameEngine`.
-  - This reduces duplicated state and centralizes scene-switch policy.
-- Layered scene stack with pause overlay
-  - `pushScene(pause)` overlays pause on top of gameplay scene.
-  - `popScene()` returns to previous scene state without rebuilding entities.
-- Unified manager pipeline in base `Scene`
-  - Default update order: movement -> collision -> lifecycle cleanup.
-  - Keeps orchestration reusable across different scenes.
-- Unified input abstraction
-  - Different input devices map to `InputState` via `InputSource` implementations.
-  - Scene logic consumes one state model regardless of device.
-- Hitbox geometry decoupled from world position
-  - `RectHitbox` stores only width/height, `CircleHitbox` stores only radius.
-  - World position comes from `Entity`, keeping geometry data clean.
-- Collision ownership split by responsibility
-  - `CollisionManager` handles pair detection and dispatch only.
-  - Domain responses stay inside each entity’s `onCollision` (for example, wall color changes, circle rollback, droplet/wind interaction).
-- Generic entity collections for systems
-  - `MovementManager` and `CollisionManager` both consume `Collection<Entity>` rather than scene-maintained specialized lists.
-  - This keeps `EntityManager` focused on storage while systems decide who to process.
-- Scene state persistence through reuse
-  - Demo scenes are created once and reused when cycling.
-  - Object state (positions, velocities, spawned entities) is retained across scene switches.
-- Input layering on top of shared manager
-  - Scenes register/unregister their own input sources in lifecycle hooks.
-  - Pause flow adds temporary pause-specific sources without replacing engine-level input architecture.
-- Reusable UI as first-class entities
-  - `Button` and `VolumeSlider` extend `Entity`, so UI follows the same lifecycle/render model as gameplay objects.
-  - This creates a consistent object model across gameplay and menu systems.
+- Scene cycle orchestration
+  - `SceneManager.registerCycleScene(scene)` + `SceneManager.cycleScene()`.
+  - Removes hardcoded scene toggling logic from `GameEngine`.
+- Layered pause overlay
+  - `pushScene(pause)` overlays pause on top of gameplay.
+  - Resume returns to the exact prior game state.
+- Unified scene update pipeline
+  - Base `Scene.update(...)`: movement -> collision -> entity lifecycle cleanup.
+- Generic system processing over `Collection<Entity>`
+  - `MovementManager` and `CollisionManager` operate on generic entity collections.
+- Decoupled hitbox geometry
+  - Hitboxes store only shape dimensions/radius.
+  - World position comes from `Entity`.
+- Input abstraction with pluggable sources
+  - `InputSource` implementations feed a unified `InputState`.
+  - Includes keyboard, mouse-direction, mouse-click, pause input, and custom key mapping.
+- Reusable UI entities
+  - `Button` and `VolumeSlider` extend `Entity` and follow the same lifecycle style.
+- Audio scene orchestration
+  - `AudioManager` handles SFX + background music switching and volume control.
+  - Demo scenes request their own background track on `onEnter()`.
+- Gameplay objective loop in DemoScene1
+  - Score/timer objective (catch 100 droplets), completion timing, and restart flow (`R`).
+
+## OOP Principles in This Engine
+
+### Abstraction
+
+- `Entity` abstracts common position/lifecycle behavior.
+- `Scene` abstracts scene lifecycle and update pipeline.
+- `Hitbox` abstracts collision geometry type.
+
+### Encapsulation
+
+- Core state is hidden behind methods (for example `Entity` position, active state).
+- `EntityManager` encapsulates entity storage and cleanup rules.
+- `AudioManager` encapsulates sound/music loading, switching, and volume logic.
+
+### Inheritance
+
+- `MovableTextureObject extends Entity` to reuse textured movable/collidable behavior.
+- Game entities specialize behavior by overriding `onCollision`, `draw`, or movement logic.
+
+### Composition
+
+- `Scene` composes managers (`EntityManager`, `MovementManager`, `CollisionManager`).
+- `GameEngine` composes scene instances and managers.
+- Scenes compose entities and input sources.
+
+### Interfaces and Abstract Classes
+
+- Interfaces: `InputSource`, `Movable`, `Collidable`.
+- Abstract classes: `Entity`, `Scene`, `Hitbox`, `MovableTextureObject`.
+
+### Polymorphism
+
+- `EntityManager` draws mixed entity types via polymorphic `draw(...)`.
+- Physics managers process `Entity` collections and branch by interface contracts (`Movable`, `Collidable`).
+- `InputManager` updates different `InputSource` implementations through one interface.
 
 ## Architecture Map (Inheritance / Implementation)
 
@@ -68,7 +97,7 @@ A libGDX project with a reusable engine layer (`engine`) and game/demo layer (`g
 
 ### Game Entities
 
-- `MovableTextureObject extends Entity implements Collidable, Movable` (abstract class)
+- `MovableTextureObject extends Entity implements Collidable, Movable` (abstract)
   - `Bucket extends MovableTextureObject`
   - `Droplet extends MovableTextureObject`
   - `Wind extends MovableTextureObject`
@@ -92,167 +121,128 @@ A libGDX project with a reusable engine layer (`engine`) and game/demo layer (`g
 - `KeyboardInputSource implements InputSource`
 - `KeyboardArrowInputSource implements InputSource`
 - `KeyboardWASDInputSource implements InputSource`
+- `KeyboardCustomInputSource implements InputSource`
 - `MouseInputSource implements InputSource`
 - `MouseClickInputSource implements InputSource`
 - `PauseInputSource implements InputSource`
 
 ## Engine Layer
 
-### Core Interfaces and State
+### Core Contracts
 
 - `engine/core/Collidable.java`
-  Collision contract: `getHitbox`, `setHitbox`, `onCollision`.
+  - `getHitbox`, `setHitbox`, `onCollision`
 - `engine/core/Movable.java`
-  Movement contract: `updatePosition` and velocity getters/setters.
+  - position update + velocity accessors
 - `engine/core/InputSource.java`
-  Contract for populating an `InputState` each frame.
+  - `updateState(InputState state)`
 - `engine/core/InputState.java`
-  Unified input data:
-  - movement flags (`up/down/left/right`)
-  - action flags (`action1/action2/pause`)
-  - pointer fields (`pointerX/pointerY/justTouched`)
-
-### Entities and Hitboxes
-
-- `engine/entities/Entity.java`
-  Abstract base entity with:
-  - position (`x`, `y`)
-  - logical identity (`name`)
-  - active flag + `destroy()`
-  - two draw hooks (`draw(SpriteBatch)`, `draw(ShapeRenderer)`) as no-op defaults
-  - abstract `dispose()`
-- `engine/entities/Hitbox.java`
-  Abstract hitbox base type.
-- `engine/entities/RectHitbox.java`
-  Rectangle hitbox with width/height only.
-- `engine/entities/CircleHitbox.java`
-  Circle hitbox with radius only.
+  - movement/action/pause flags + pointer position/click state
 
 ### Managers
 
 - `engine/managers/EntityManager.java`
-  Owns entity storage (`Map<String, Entity>`), draw passes, and inactive-entity cleanup.
+  - entity storage by name, draw passes, inactive cleanup
 - `engine/managers/InputManager.java`
-  Owns input source/state maps keyed by `int` ID:
-  - `addInputSource(id, source)`
-  - `removeInputSource(id)`
-  - `update()`
-  - `getState(id)`
+  - input source registration and per-id state updates
 - `engine/managers/SceneManager.java`
-  Stack-based scene orchestration:
-  - `setScene`, `pushScene`, `popScene`, `getActiveScene`
-  - `update`, `render`, `dispose`
-  - cycle support: `registerCycleScene(scene)` and `cycleScene()`
+  - stack-based scene control + cycle-scene support
 - `engine/managers/AudioManager.java`
-  Sound map holder and playback/dispose helper (sound loading is currently a stub).
+  - SFX/music loading, playback, track switching, and volume control
 
 ### Physics
 
 - `engine/physics/MovementManager.java`
-  `update(dt, Collection<Entity>)` and updates active entities implementing `Movable`.
+  - `update(dt, Collection<Entity>)`
 - `engine/physics/CollisionDetector.java`
-  Geometry overlap checks:
-  - `overlaps(...)`
-  - `checkCircleCircle(...)`
-  - `checkRectRect(...)`
-  - `checkCircleRect(...)`
+  - shape overlap checks (`circle-circle`, `rect-rect`, `circle-rect`)
 - `engine/physics/CollisionManager.java`
-  `update(dt, Collection<Entity>)`:
-  - filters active `Collidable` entities
-  - checks hitbox overlap using `CollisionDetector`
-  - dispatches `onCollision` to both entities
+  - `update(Collection<Entity>)` and bidirectional collision dispatch
 
 ### Scene Base
 
 - `engine/scenes/Scene.java`
-  Abstract scene base with:
-  - `EntityManager`, `MovementManager`, `CollisionManager`
-  - lifecycle hooks `onEnter`, `onExit`, `dispose`
-  - default update pipeline: movement -> collision -> entity cleanup
+  - owns managers and shared update pipeline
+  - lifecycle hooks: `onEnter`, `onExit`, `dispose`
 
 ## Game Layer
 
-### Game Entities
+### DemoScene1 Highlights
 
-- `game/entities/MovableTextureObject.java`
-  Abstract textured entity implementing both `Collidable` and `Movable`.
-- `game/entities/Bucket.java`
-  Horizontal movable catcher with X clamp.
-- `game/entities/Wind.java`
-  2D movable wind area with bounds clamp; affects droplets on collision.
-- `game/entities/Droplet.java`
-  Falling droplet with wind interaction and catch/reset state.
-- `game/entities/PlayerCircle.java`
-  Shape-rendered circle player with bounds clamp and rollback-on-wall-collision behavior.
-- `game/entities/RectangleWall.java`
-  Static collidable rectangle; changes color on player collision.
-- `game/entities/StaticTextureEntity.java`
-  Non-collidable textured entity (used for background).
+- Background + bucket + wind + droplets.
+- Objective gameplay loop:
+  - catch 100 droplets
+  - timer runs until completion
+  - completion time shown
+  - droplets are removed on completion
+  - press `R` to restart
+- Droplet catch SFX via `AudioManager.playSound("water_droplet")`.
 
-### UI Entities
+### DemoScene2 Highlights
 
-- `game/ui/Button.java`
-  Shape-rendered clickable button with label and `Runnable` callback.
-- `game/ui/VolumeSlider.java`
-  Shape-rendered slider bar with clamped value in `[0, 1]`.
+- Two player circles + rectangle walls.
+- Arrow-controlled green player and mouse-driven yellow player.
+- Intense background music on scene entry.
 
-### Input Sources
+### PauseScene Highlights
 
-- `game/input/KeyboardInputSource.java`
-  Combined arrows + WASD directional input.
-- `game/input/KeyboardArrowInputSource.java`
-  Arrow-only directional input (+ space as action1).
-- `game/input/KeyboardWASDInputSource.java`
-  WASD directional input.
-- `game/input/MouseInputSource.java`
-  Converts pointer-to-entity direction into movement flags.
-- `game/input/MouseClickInputSource.java`
-  Updates pointer X/Y and `justTouched`.
-- `game/input/PauseInputSource.java`
-  Pause menu directional input + ESC as `action1`.
-
-### Scenes
-
-- `game/scenes/DemoScene1.java`
-  Bucket + wind + droplets scene with cloud background.
-- `game/scenes/DemoScene2.java`
-  Two circle players (arrow + mouse) and rectangle walls.
-- `game/scenes/PauseScene.java`
-  Pause overlay with volume slider and Resume/Quit buttons.
+- Overlay menu with:
+  - `RESUME` and `QUIT` buttons
+  - volume slider
+- Adjusts live music volume (keyboard or click-on-slider).
+- Keeps current music track active while paused.
 
 ## Runtime Flow
 
-- `GameEngine.create()` builds shared managers/scenes and sets initial scene to `DemoScene1`.
-- `TAB` triggers `sceneManager.cycleScene()` across registered demo scenes.
-- `ESC` (when not paused) pushes `PauseScene` on top of current scene.
-- Only active top scene updates/renders.
-- Demo scenes are reused (not recreated), so their in-memory object state persists across switches.
+- `GameEngine.create()` initializes managers, loads audio assets, creates scenes.
+- Initial scene: `DemoScene1`.
+- `TAB`: cycles registered demo scenes.
+- `ESC` (outside pause): pushes `PauseScene`.
+- Only top scene updates/renders.
+- Scene objects are reused, so in-memory state persists across switches.
 
 ## Controls
 
 ### Global
 
 - `TAB` -> cycle demo scenes
-- `ESC` -> push pause scene (from non-pause scenes)
+- `ESC` -> open pause scene
 
 ### DemoScene1
 
-- Bucket: arrow keys
+- Bucket: Arrow keys
 - Wind: WASD
+- Restart run: `R` (mapped to `action2`)
 
 ### DemoScene2
 
-- Green circle: arrow keys
-- Yellow circle: mouse-direction input (`MouseInputSource`)
+- Green circle: Arrow keys
+- Yellow circle: mouse-direction input
 
 ### PauseScene
 
-- `UP` / `RIGHT`: increase volume slider
-- `DOWN` / `LEFT`: decrease volume slider
+- `UP` / `RIGHT`: increase volume
+- `DOWN` / `LEFT`: decrease volume
 - `ESC` (`action1`): resume
 - Mouse click:
-  - `RESUME` button: resume
-  - `QUIT` button: exit app
+  - `RESUME` button -> resume
+  - `QUIT` button -> exit
+  - slider track -> set volume by click position
+
+## Current Limitations (Design Tradeoffs)
+
+- Scene classes still carry multiple responsibilities
+  - Scene setup, per-frame game rules, input wiring, and HUD rendering are in the same classes.
+- Collision extensibility
+  - `CollisionDetector` uses explicit type checks; adding new shape types requires editing detector logic.
+- `Collidable` breadth
+  - `setHitbox(...)` is required for all collidables even if some should be immutable.
+- Input manager keying
+  - `InputManager` uses integer IDs; this works but can become fragile as projects scale.
+- Audio manager scope
+  - `AudioManager` currently handles both SFX and music (acceptable here, but split managers may scale better).
+- Engine lacks dedicated service boundaries for HUD/game rules
+  - No separate gameplay systems layer yet (for example score service, round controller, HUD renderer).
 
 ## Build and Run
 
@@ -260,7 +250,7 @@ A libGDX project with a reusable engine layer (`engine`) and game/demo layer (`g
 
 - Java 17+
 
-### Run (desktop)
+### Run desktop app
 
 From project root:
 
