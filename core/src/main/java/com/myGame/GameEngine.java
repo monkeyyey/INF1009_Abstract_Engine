@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.myGame.engine.managers.InputManager;
+import com.myGame.engine.managers.AudioManager;
 import com.myGame.engine.managers.SceneManager;
 import com.myGame.engine.scenes.Scene;
 import com.myGame.game.scenes.DemoScene1;
@@ -19,24 +20,42 @@ public class GameEngine extends ApplicationAdapter {
     private ShapeRenderer shape;
     private SceneManager sceneManager;
     private InputManager inputManager;
+    private AudioManager audioManager;
     private DemoScene1 demoScene1;
     private DemoScene2 demoScene2;
     private PauseScene pauseScene;
 
     @Override
     public void create() {
+
+        // Renderers
         batch = new SpriteBatch();
         shape = new ShapeRenderer();
+
+        // Instantiate managers
         inputManager = new InputManager();
+        audioManager = new AudioManager();
         sceneManager = new SceneManager();
-        demoScene1 = new DemoScene1(inputManager);
-        demoScene2 = new DemoScene2(inputManager);
+
+        // Load and configure Sound effects and background music
+        audioManager.loadSound("water_droplet", "water_droplet.wav");
+        audioManager.loadMusic("calm", "calm_background_music.mp3");
+        audioManager.loadMusic("intense", "intense_background_music.mp3");
+        audioManager.setMusicTrackVolume("calm", 0.55f);
+        audioManager.setMusicTrackVolume("intense", 0.35f);
+
+        // Create and configure game and pause menu scenes
+        demoScene1 = new DemoScene1(inputManager, audioManager);
+        demoScene2 = new DemoScene2(inputManager, audioManager);
         sceneManager.registerCycleScene(demoScene1);
         sceneManager.registerCycleScene(demoScene2);
         pauseScene = new PauseScene(
                 inputManager,
+                audioManager,
                 () -> sceneManager.popScene(),
                 () -> Gdx.app.exit());
+
+        // Start with demoScene1
         sceneManager.setScene(demoScene1);
     }
 
@@ -53,6 +72,7 @@ public class GameEngine extends ApplicationAdapter {
     @Override
     public void dispose() {
         sceneManager.dispose();
+        audioManager.dispose();
         batch.dispose();
         shape.dispose();
     }
@@ -61,11 +81,13 @@ public class GameEngine extends ApplicationAdapter {
         Scene activeScene = sceneManager.getActiveScene();
         boolean paused = activeScene instanceof PauseScene;
 
+        // switch to pause scene
         if (!paused && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             sceneManager.pushScene(pauseScene);
             return;
         }
 
+        // Cycle within game scenes
         if (!paused && Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
             sceneManager.cycleScene();
         }

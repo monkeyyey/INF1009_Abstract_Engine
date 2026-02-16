@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.myGame.engine.core.InputState;
 import com.myGame.engine.managers.InputManager;
+import com.myGame.engine.managers.AudioManager;
 import com.myGame.engine.scenes.Scene;
 import com.myGame.game.entities.RectangleWall;
 import com.myGame.game.entities.PlayerCircle;
@@ -17,6 +18,7 @@ import java.util.List;
 
 public class DemoScene2 extends Scene {
     private final InputManager inputManager;
+    private final AudioManager audioManager;
     private final int arrowPlayerId = 0;
     private final int wasdPlayerId = 1;
     private PlayerCircle arrowPlayer;
@@ -24,13 +26,15 @@ public class DemoScene2 extends Scene {
     private final List<RectangleWall> rects = new ArrayList<>();
     private boolean initialized = false;
 
-    public DemoScene2(InputManager inputManager) {
+    public DemoScene2(InputManager inputManager, AudioManager audioManager) {
         super();
         this.inputManager = inputManager;
+        this.audioManager = audioManager;
     }
 
     @Override
     public void onEnter() {
+        audioManager.playMusic("intense");
         if (!initialized) {
             initialized = true;
             // Constants

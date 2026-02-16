@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.myGame.engine.core.InputState;
 import com.myGame.engine.managers.InputManager;
+import com.myGame.engine.managers.AudioManager;
 import com.myGame.engine.scenes.Scene;
 import com.myGame.game.input.MouseClickInputSource;
 import com.myGame.game.input.PauseInputSource;
@@ -21,6 +22,7 @@ public class PauseScene extends Scene {
     private static final float VOLUME_STEP_PER_SEC = 0.8f;
 
     private final InputManager pauseInputManager;
+    private final AudioManager audioManager;
     private final Runnable onResume;
     private final Runnable onQuit;
     private BitmapFont font;
@@ -32,9 +34,10 @@ public class PauseScene extends Scene {
     private Button quitButton;
     private VolumeSlider volumeSlider;
 
-    public PauseScene(InputManager pauseInputManager, Runnable onResume, Runnable onQuit) {
+    public PauseScene(InputManager pauseInputManager, AudioManager audioManager, Runnable onResume, Runnable onQuit) {
         super();
         this.pauseInputManager = pauseInputManager;
+        this.audioManager = audioManager;
         this.onResume = onResume;
         this.onQuit = onQuit;
     }
@@ -62,6 +65,12 @@ public class PauseScene extends Scene {
         volumeSlider = new VolumeSlider(sliderX, sliderY, sliderW, sliderH, Color.DARK_GRAY, Color.GREEN, musicVolume);
         resumeButton = new Button("RESUME", buttonX, resumeY, buttonW, buttonH, Color.DARK_GRAY, onResume);
         quitButton = new Button("QUIT", buttonX, quitY, buttonW, buttonH, Color.DARK_GRAY, onQuit);
+
+        float currentMusicVolume = audioManager.getMusicVolume();
+        if (currentMusicVolume > 0f) {
+            musicVolume = currentMusicVolume;
+            volumeSlider.setValue(musicVolume);
+        }
 
         pauseInputManager.addInputSource(PAUSE_INPUT_ID, new PauseInputSource());
         pauseInputManager.addInputSource(PAUSE_POINTER_INPUT_ID, new MouseClickInputSource());
@@ -98,13 +107,17 @@ public class PauseScene extends Scene {
         if (delta != 0f) {
             musicVolume = Math.max(0f, Math.min(1f, musicVolume + delta));
             volumeSlider.setValue(musicVolume);
+            audioManager.setMusicVolume(musicVolume);
         }
 
         if (!pointer.isJustTouched()) return;
         float touchX = pointer.getPointerX();
         float touchY = pointer.getPointerY();
         if (resumeButton.handleClick(touchX, touchY)) return;
-        quitButton.handleClick(touchX, touchY);
+        if (quitButton.handleClick(touchX, touchY)) return;
+        if (volumeSlider.contains(touchX, touchY)) {
+            applyVolumeFromPointer(touchX);
+        }
     }
 
     @Override
@@ -136,6 +149,13 @@ public class PauseScene extends Scene {
         float textX = button.getX() + (button.getWidth() - glyphLayout.width) / 2f;
         float textY = button.getY() + (button.getHeight() + glyphLayout.height) / 2f;
         font.draw(batch, glyphLayout, textX, textY);
+    }
+
+    private void applyVolumeFromPointer(float touchX) {
+        float relative = (touchX - volumeSlider.getX()) / volumeSlider.getWidth();
+        musicVolume = Math.max(0f, Math.min(1f, relative));
+        volumeSlider.setValue(musicVolume);
+        audioManager.setMusicVolume(musicVolume);
     }
 
     @Override

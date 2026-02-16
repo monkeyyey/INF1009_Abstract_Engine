@@ -7,17 +7,27 @@ public class Droplet extends MovableTextureObject {
     private float fallSpeed = -200f;
     private float windPushSpeed = 140f;
     private boolean touchedByWindThisFrame = false;
+    private final Runnable onCaught;
 
     public Droplet(String path, float x, float y, float width, float height, float fallSpeed, float windPushSpeed) {
+        this(path, x, y, width, height, fallSpeed, windPushSpeed, null);
+    }
+
+    public Droplet(String path, float x, float y, float width, float height,
+                   float fallSpeed, float windPushSpeed, Runnable onCaught) {
         super(path, x, y, width, height);
         this.fallSpeed = fallSpeed;
         this.windPushSpeed = windPushSpeed;
+        this.onCaught = onCaught;
     }
 
     @Override
     public void onCollision(Entity other) {
-        if (other instanceof Bucket) {
+        if (other instanceof Bucket && !caught) {
             caught = true;
+            if (onCaught != null) {
+                onCaught.run();
+            }
         }
     }
 

@@ -36,4 +36,20 @@ public class VolumeSlider extends Entity {
     public void setValue(float value) {
         this.value = Math.max(0f, Math.min(1f, value));
     }
+
+    public float getValue() {
+        return value;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public boolean contains(float px, float py) {
+        return px >= getX() && px <= getX() + width && py >= getY() && py <= getY() + height;
+    }
 }

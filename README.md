@@ -143,7 +143,7 @@ A libGDX project with a reusable engine layer (`engine`) and game/demo layer (`g
   - `setScene`, `pushScene`, `popScene`, `getActiveScene`
   - `update`, `render`, `dispose`
   - cycle support: `registerCycleScene(scene)` and `cycleScene()`
-- `engine/managers/OutputManager.java`
+- `engine/managers/AudioManager.java`
   Sound map holder and playback/dispose helper (sound loading is currently a stub).
 
 ### Physics
