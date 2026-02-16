@@ -3,6 +3,9 @@ package com.myGame.engine.core;
 public class InputState {
     private boolean up, down, left, right;
     private boolean action1, action2, pause;
+    private float pointerX;
+    private float pointerY;
+    private boolean justTouched;
 
     public void copyFrom(InputState other) {
         this.up = other.up;
@@ -12,6 +15,9 @@ public class InputState {
         this.action1 = other.action1;
         this.action2 = other.action2;
         this.pause = other.pause;
+        this.pointerX = other.pointerX;
+        this.pointerY = other.pointerY;
+        this.justTouched = other.justTouched;
     }
 
     // Getters and Setters
@@ -29,4 +35,10 @@ public class InputState {
     public void setAction2(boolean action2) { this.action2 = action2; }
     public boolean isPause() { return pause; }
     public void setPause(boolean pause) { this.pause = pause; }
+    public float getPointerX() { return pointerX; }
+    public void setPointerX(float pointerX) { this.pointerX = pointerX; }
+    public float getPointerY() { return pointerY; }
+    public void setPointerY(float pointerY) { this.pointerY = pointerY; }
+    public boolean isJustTouched() { return justTouched; }
+    public void setJustTouched(boolean justTouched) { this.justTouched = justTouched; }
 }

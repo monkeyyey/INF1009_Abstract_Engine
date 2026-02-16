@@ -9,12 +9,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.myGame.engine.core.InputState;
 import com.myGame.engine.managers.InputManager;
 import com.myGame.engine.scenes.Scene;
+import com.myGame.game.input.MouseClickInputSource;
 import com.myGame.game.input.PauseInputSource;
 import com.myGame.game.ui.Button;
 import com.myGame.game.ui.VolumeSlider;
 
 public class PauseScene extends Scene {
     private static final int PAUSE_INPUT_ID = 100;
+    private static final int PAUSE_POINTER_INPUT_ID = 101;
     private static final float VOLUME_STEP_PER_SEC = 0.8f;
     private static final float BUTTON_WIDTH = 220f;
     private static final float BUTTON_HEIGHT = 60f;
@@ -62,18 +64,21 @@ public class PauseScene extends Scene {
         quitButton = new Button("QUIT", buttonX, quitY, BUTTON_WIDTH, BUTTON_HEIGHT, Color.DARK_GRAY, onQuit);
 
         pauseInputManager.addInputSource(PAUSE_INPUT_ID, new PauseInputSource());
+        pauseInputManager.addInputSource(PAUSE_POINTER_INPUT_ID, new MouseClickInputSource());
         blockEscapeUntilReleased = true;
     }
 
     @Override
     public void onExit() {
         pauseInputManager.removeInputSource(PAUSE_INPUT_ID);
+        pauseInputManager.removeInputSource(PAUSE_POINTER_INPUT_ID);
     }
 
     @Override
     public void update(float dt) {
         InputState input = pauseInputManager.getState(PAUSE_INPUT_ID);
-        if (input == null) return;
+        InputState pointer = pauseInputManager.getState(PAUSE_POINTER_INPUT_ID);
+        if (input == null || pointer == null) return;
 
         if (blockEscapeUntilReleased) {
             if (!Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
@@ -95,9 +100,9 @@ public class PauseScene extends Scene {
             volumeSlider.setValue(musicVolume);
         }
 
-        if (!Gdx.input.justTouched()) return;
-        float touchX = Gdx.input.getX();
-        float touchY = Gdx.graphics.getHeight() - Gdx.input.getY();
+        if (!pointer.isJustTouched()) return;
+        float touchX = pointer.getPointerX();
+        float touchY = pointer.getPointerY();
         if (resumeButton.handleClick(touchX, touchY)) return;
         quitButton.handleClick(touchX, touchY);
     }
