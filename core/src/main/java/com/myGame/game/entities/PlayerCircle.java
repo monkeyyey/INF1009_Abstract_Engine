@@ -49,10 +49,10 @@ public class PlayerCircle extends Entity implements Collidable, Movable {
 
     @Override
     public void updatePosition(float dt) {
-        previousX = x;
-        previousY = y;
-        x += vx * dt;
-        y += vy * dt;
+        previousX = getX();
+        previousY = getY();
+        setX(getX() + vx * dt);
+        setY(getY() + vy * dt);
         float r = getRadius();
         float clampedX = getX();
         float clampedY = getY();

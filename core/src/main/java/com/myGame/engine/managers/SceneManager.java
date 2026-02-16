@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Set;
 
 public class SceneManager {
-    private Deque<Scene> sceneStack = new ArrayDeque<>();
-    private Set<Scene> detachedScenes = new HashSet<>();
-    private List<Scene> cycleScenes = new ArrayList<>();
+    private final Deque<Scene> sceneStack = new ArrayDeque<>();
+    private final Set<Scene> detachedScenes = new HashSet<>();
+    private final List<Scene> cycleScenes = new ArrayList<>();
 
     public void setScene(Scene next) {
         if (!sceneStack.isEmpty()) {

@@ -24,7 +24,7 @@ public class RectangleWall extends Entity implements Collidable {
     @Override
     public void draw(ShapeRenderer shape) {
         shape.setColor(color);
-        shape.rect(x, y, width, height);
+        shape.rect(getX(), getY(), width, height);
     }
 
     @Override

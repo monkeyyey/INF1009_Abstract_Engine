@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OutputManager {
-    private Map<String, Sound> soundMap = new HashMap<>();
+    private final Map<String, Sound> soundMap = new HashMap<>();
 
     public void loadSound(String name, String path) {
         // Gdx.audio.newSound implementation

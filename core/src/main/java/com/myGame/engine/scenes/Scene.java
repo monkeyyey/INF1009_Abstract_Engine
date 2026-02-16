@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public abstract class Scene {
-    protected EntityManager entityManager;
-    protected CollisionManager collisionManager;
-    protected MovementManager movementManager;
+    protected final EntityManager entityManager;
+    protected final CollisionManager collisionManager;
+    protected final MovementManager movementManager;
 
     public Scene() {
         entityManager = new EntityManager();

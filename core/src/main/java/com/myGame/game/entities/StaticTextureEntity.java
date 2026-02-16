@@ -18,7 +18,7 @@ public class StaticTextureEntity extends Entity {
 
     @Override
     public void draw(SpriteBatch batch) {
-        batch.draw(texture, x, y, width, height);
+        batch.draw(texture, getX(), getY(), width, height);
     }
 
     @Override

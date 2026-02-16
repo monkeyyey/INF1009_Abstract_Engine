@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InputManager {
-    private Map<Integer, InputSource> inputSources = new HashMap<>();
-    private Map<Integer, InputState> inputStates = new HashMap<>();
+    private final Map<Integer, InputSource> inputSources = new HashMap<>();
+    private final Map<Integer, InputState> inputStates = new HashMap<>();
 
     public void addInputSource(int id, InputSource source) {
         inputSources.put(id, source);

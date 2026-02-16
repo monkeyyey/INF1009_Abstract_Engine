@@ -34,7 +34,7 @@ public class CollisionManager {
         }
     }
 
-    public void resolve(Collidable a, Entity ea, Collidable b, Entity eb) {
+    private void resolve(Collidable a, Entity ea, Collidable b, Entity eb) {
         a.onCollision(eb);
         b.onCollision(ea);
     }

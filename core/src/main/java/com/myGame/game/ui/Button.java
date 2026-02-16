@@ -6,8 +6,8 @@ import com.myGame.engine.entities.Entity;
 
 public class Button extends Entity {
     private final String label;
-    private float width;
-    private float height;
+    private final float width;
+    private final float height;
     private Color color;
     private final Runnable onClick;
 
@@ -21,7 +21,7 @@ public class Button extends Entity {
     }
 
     public boolean contains(float px, float py) {
-        return px >= x && px <= x + width && py >= y && py <= y + height;
+        return px >= getX() && px <= getX() + width && py >= getY() && py <= getY() + height;
     }
 
     public boolean handleClick(float px, float py) {
@@ -33,7 +33,7 @@ public class Button extends Entity {
     @Override
     public void draw(ShapeRenderer shape) {
         shape.setColor(color);
-        shape.rect(x, y, width, height);
+        shape.rect(getX(), getY(), width, height);
     }
 
     @Override

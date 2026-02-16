@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Iterator;
 
 public class EntityManager {
-    private Map<String, Entity> entities = new LinkedHashMap<>();
+    private final Map<String, Entity> entities = new LinkedHashMap<>();
 
     public void addEntity(String name, Entity entity) {
         entity.setName(name);

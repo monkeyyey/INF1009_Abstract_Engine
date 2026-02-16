@@ -23,9 +23,9 @@ public class VolumeSlider extends Entity {
     @Override
     public void draw(ShapeRenderer shape) {
         shape.setColor(trackColor);
-        shape.rect(x, y, width, height);
+        shape.rect(getX(), getY(), width, height);
         shape.setColor(fillColor);
-        shape.rect(x, y, width * value, height);
+        shape.rect(getX(), getY(), width * value, height);
     }
 
     @Override

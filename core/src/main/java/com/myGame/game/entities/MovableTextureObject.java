@@ -12,9 +12,9 @@ public abstract class MovableTextureObject extends Entity implements Collidable,
     private final Texture texture;
     private final float width;
     private final float height;
-    protected Hitbox hitbox;
-    protected float vx;
-    protected float vy;
+    private Hitbox hitbox;
+    private float vx;
+    private float vy;
 
     public MovableTextureObject(String path, float x, float y, float width, float height) {
         super(x, y);
@@ -26,8 +26,8 @@ public abstract class MovableTextureObject extends Entity implements Collidable,
 
     @Override
     public void updatePosition(float dt) {
-        x += vx * dt;
-        y += vy * dt;
+        setX(getX() + vx * dt);
+        setY(getY() + vy * dt);
     }
 
     @Override
@@ -50,7 +50,7 @@ public abstract class MovableTextureObject extends Entity implements Collidable,
 
     @Override
     public void draw(SpriteBatch batch) {
-        batch.draw(texture, x, y, width, height);
+        batch.draw(texture, getX(), getY(), width, height);
     }
 
     public abstract void onCollision(Entity other);

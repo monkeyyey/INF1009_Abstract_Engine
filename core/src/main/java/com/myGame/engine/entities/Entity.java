@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public abstract class Entity {
-    protected float x, y;
-    protected String name; // null indicates unnamed
-    protected boolean active = true;
+    private float x, y;
+    private String name; // null indicates unnamed
+    private boolean active = true;
 
     public Entity(float x, float y) {
         this.x = x;
