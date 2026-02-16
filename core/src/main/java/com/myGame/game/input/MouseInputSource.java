@@ -8,15 +8,15 @@ import com.myGame.engine.entities.Entity;
 
 public class MouseInputSource implements InputSource {
     private static final float DEFAULT_DEADZONE = 10f;
-    private final Entity player;
+    private final Entity target;
     private final float deadzone;
 
-    public MouseInputSource(Entity player) {
-        this(player, DEFAULT_DEADZONE);
+    public MouseInputSource(Entity target) {
+        this(target, DEFAULT_DEADZONE);
     }
 
-    public MouseInputSource(Entity player, float deadzone) {
-        this.player = player;
+    public MouseInputSource(Entity target, float deadzone) {
+        this.target = target;
         this.deadzone = Math.max(0f, deadzone);
     }
 
@@ -24,8 +24,8 @@ public class MouseInputSource implements InputSource {
     public void updateState(InputState state) {
         float mouseX = Gdx.input.getX();
         float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
-        float dx = mouseX - player.getX();
-        float dy = mouseY - player.getY();
+        float dx = mouseX - target.getX();
+        float dy = mouseY - target.getY();
 
         boolean moveHorizontally = Math.abs(dx) > deadzone;
         boolean moveVertically = Math.abs(dy) > deadzone;
