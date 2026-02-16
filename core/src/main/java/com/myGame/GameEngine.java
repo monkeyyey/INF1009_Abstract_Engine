@@ -22,7 +22,6 @@ public class GameEngine extends ApplicationAdapter {
     private DemoScene1 demoScene1;
     private DemoScene2 demoScene2;
     private PauseScene pauseScene;
-    private boolean demoActive = true;
 
     @Override
     public void create() {
@@ -57,8 +56,8 @@ public class GameEngine extends ApplicationAdapter {
     }
 
     private void handleGlobalInput() {
-        Scene active = sceneManager.getActiveScene();
-        boolean paused = active instanceof PauseScene;
+        Scene activeScene = sceneManager.getActiveScene();
+        boolean paused = activeScene instanceof PauseScene;
 
         if (!paused && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             sceneManager.pushScene(pauseScene);
@@ -66,11 +65,10 @@ public class GameEngine extends ApplicationAdapter {
         }
 
         if (!paused && Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
-            demoActive = !demoActive;
-            if (demoActive) {
-                sceneManager.setScene(demoScene1);
-            } else {
+            if (activeScene == demoScene1) {
                 sceneManager.setScene(demoScene2);
+            } else if (activeScene == demoScene2) {
+                sceneManager.setScene(demoScene1);
             }
         }
     }
