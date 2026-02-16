@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class CollisionManager {
-    public void update(float dt, Collection<Entity> entities) {
+    public void update(Collection<Entity> entities) {
         if (entities == null || entities.isEmpty()) return;
 
         List<Entity> all = new ArrayList<>(entities);

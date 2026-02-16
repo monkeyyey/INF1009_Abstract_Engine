@@ -31,6 +31,8 @@ public class GameEngine extends ApplicationAdapter {
         sceneManager = new SceneManager();
         demoScene1 = new DemoScene1(inputManager);
         demoScene2 = new DemoScene2(inputManager);
+        sceneManager.registerCycleScene(demoScene1);
+        sceneManager.registerCycleScene(demoScene2);
         pauseScene = new PauseScene(
                 inputManager,
                 () -> sceneManager.popScene(),
@@ -65,11 +67,7 @@ public class GameEngine extends ApplicationAdapter {
         }
 
         if (!paused && Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
-            if (activeScene == demoScene1) {
-                sceneManager.setScene(demoScene2);
-            } else if (activeScene == demoScene2) {
-                sceneManager.setScene(demoScene1);
-            }
+            sceneManager.cycleScene();
         }
     }
 }

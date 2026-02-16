@@ -22,7 +22,7 @@ public abstract class Scene {
     
     public void update(float dt) {
         movementManager.update(dt, entityManager.getEntities());
-        collisionManager.update(dt, entityManager.getEntities());
+        collisionManager.update(entityManager.getEntities());
         entityManager.update(dt);
     }
 

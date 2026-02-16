@@ -16,7 +16,7 @@ public class Button extends Entity {
         this.label = label;
         this.width = width;
         this.height = height;
-        this.color = Color.DARK_GRAY;
+        this.color = color;
         this.onClick = onClick;
     }
 
