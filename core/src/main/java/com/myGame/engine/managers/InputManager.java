@@ -4,12 +4,14 @@ import com.myGame.engine.core.InputSource;
 import com.myGame.engine.core.InputState;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class InputManager {
     private final Map<Integer, InputSource> inputSources = new HashMap<>();
     private final Map<Integer, InputState> inputStates = new HashMap<>();
 
     public void addInputSource(int id, InputSource source) {
+        Objects.requireNonNull(source, "InputSource cannot be null");
         inputSources.put(id, source);
         inputStates.put(id, new InputState());
     }

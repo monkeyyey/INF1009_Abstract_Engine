@@ -6,6 +6,7 @@ import com.myGame.engine.core.Collidable;
 import com.myGame.engine.entities.Entity;
 import com.myGame.engine.entities.Hitbox;
 import com.myGame.engine.entities.RectHitbox;
+import java.util.Objects;
 
 public class RectangleWall extends Entity implements Collidable {
     private RectHitbox hitbox;
@@ -49,8 +50,10 @@ public class RectangleWall extends Entity implements Collidable {
 
     @Override
     public void setHitbox(Hitbox hitbox) {
-        if (hitbox instanceof RectHitbox) {
-            this.hitbox = (RectHitbox) hitbox;
+        Objects.requireNonNull(hitbox, "Hitbox cannot be null");
+        if (!(hitbox instanceof RectHitbox)) {
+            throw new IllegalArgumentException("RectangleWall requires RectHitbox");
         }
+        this.hitbox = (RectHitbox) hitbox;
     }
 }

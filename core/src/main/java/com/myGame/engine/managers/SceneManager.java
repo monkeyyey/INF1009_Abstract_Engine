@@ -8,6 +8,8 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 
 public class SceneManager {
@@ -16,6 +18,7 @@ public class SceneManager {
     private final List<Scene> cycleScenes = new ArrayList<>();
 
     public void setScene(Scene next) {
+        Objects.requireNonNull(next, "Scene cannot be null");
         if (!sceneStack.isEmpty()) {
             Scene current = sceneStack.pop();
             current.onExit();
@@ -28,11 +31,15 @@ public class SceneManager {
     }
 
     public void pushScene(Scene next) {
+        Objects.requireNonNull(next, "Scene cannot be null");
         sceneStack.push(next);
         next.onEnter();
     }
 
     public Scene popScene() {
+        if (sceneStack.isEmpty()) {
+            throw new NoSuchElementException("Cannot pop scene: scene stack is empty");
+        }
         Scene s = sceneStack.pop();
         s.onExit();
         return s;
@@ -43,7 +50,8 @@ public class SceneManager {
     }
 
     public void registerCycleScene(Scene scene) {
-        if (scene != null && !cycleScenes.contains(scene)) {
+        Objects.requireNonNull(scene, "Scene cannot be null");
+        if (!cycleScenes.contains(scene)) {
             cycleScenes.add(scene);
         }
     }

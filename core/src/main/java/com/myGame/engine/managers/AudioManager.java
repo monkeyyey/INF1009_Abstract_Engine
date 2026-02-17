@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class AudioManager {
     private final Map<String, Sound> soundMap = new HashMap<>();
@@ -13,6 +14,7 @@ public class AudioManager {
     private String currentMusicName;
 
     public void loadSound(String name, String path) {
+        validateAssetKeyAndPath(name, path);
         Sound existing = soundMap.remove(name);
         if (existing != null) {
             existing.dispose();
@@ -21,13 +23,16 @@ public class AudioManager {
     }
 
     public void playSound(String name) {
+        validateKey(name, "Sound name");
         Sound sound = soundMap.get(name);
-        if (sound != null) {
-            sound.play();
+        if (sound == null) {
+            throw new IllegalArgumentException("Sound not loaded: " + name);
         }
+        sound.play();
     }
 
     public void loadMusic(String name, String path) {
+        validateAssetKeyAndPath(name, path);
         Music existing = musicMap.remove(name);
         if (existing != null) {
             existing.dispose();
@@ -36,8 +41,11 @@ public class AudioManager {
     }
 
     public void playMusic(String name) {
+        validateKey(name, "Music name");
         Music target = musicMap.get(name);
-        if (target == null) return;
+        if (target == null) {
+            throw new IllegalArgumentException("Music not loaded: " + name);
+        }
         if (name.equals(currentMusicName) && target.isPlaying()) return;
 
         if (currentMusicName != null) {
@@ -54,6 +62,7 @@ public class AudioManager {
     }
 
     public void setMusicTrackVolume(String name, float volume) {
+        validateKey(name, "Music name");
         float clamped = Math.max(0f, Math.min(1f, volume));
         musicVolumeMap.put(name, clamped);
         if (name.equals(currentMusicName)) {
@@ -101,5 +110,17 @@ public class AudioManager {
         soundMap.clear();
         musicMap.clear();
         currentMusicName = null;
+    }
+
+    private static void validateAssetKeyAndPath(String name, String path) {
+        validateKey(name, "Asset name");
+        validateKey(path, "Asset path");
+    }
+
+    private static void validateKey(String value, String label) {
+        Objects.requireNonNull(value, label + " cannot be null");
+        if (value.isBlank()) {
+            throw new IllegalArgumentException(label + " cannot be blank");
+        }
     }
 }

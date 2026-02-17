@@ -8,6 +8,7 @@ import com.myGame.engine.core.Movable;
 import com.myGame.engine.entities.CircleHitbox;
 import com.myGame.engine.entities.Entity;
 import com.myGame.engine.entities.Hitbox;
+import java.util.Objects;
 
 public class PlayerCircle extends Entity implements Collidable, Movable {
     private final float radius;
@@ -86,7 +87,13 @@ public class PlayerCircle extends Entity implements Collidable, Movable {
     public Hitbox getHitbox() { return hitbox; }
 
     @Override
-    public void setHitbox(Hitbox hitbox) { this.hitbox = hitbox; }
+    public void setHitbox(Hitbox hitbox) {
+        Objects.requireNonNull(hitbox, "Hitbox cannot be null");
+        if (!(hitbox instanceof CircleHitbox)) {
+            throw new IllegalArgumentException("PlayerCircle requires CircleHitbox");
+        }
+        this.hitbox = hitbox;
+    }
 
     @Override
     public float getVelocityX() { return vx; }

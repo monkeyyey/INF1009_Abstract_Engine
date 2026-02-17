@@ -7,6 +7,7 @@ import com.myGame.engine.entities.Hitbox;
 import com.myGame.engine.entities.RectHitbox;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
+import java.util.Objects;
 
 public abstract class MovableTextureObject extends Entity implements Collidable, Movable {
     private final Texture texture;
@@ -18,6 +19,13 @@ public abstract class MovableTextureObject extends Entity implements Collidable,
 
     public MovableTextureObject(String path, float x, float y, float width, float height) {
         super(x, y);
+        Objects.requireNonNull(path, "Texture path cannot be null");
+        if (path.isBlank()) {
+            throw new IllegalArgumentException("Texture path cannot be blank");
+        }
+        if (width <= 0f || height <= 0f) {
+            throw new IllegalArgumentException("Width and height must be > 0");
+        }
         this.texture = new Texture(path);
         this.width = width;
         this.height = height;
@@ -46,7 +54,9 @@ public abstract class MovableTextureObject extends Entity implements Collidable,
     public Hitbox getHitbox() { return hitbox; }
 
     @Override
-    public void setHitbox(Hitbox hitbox) { this.hitbox = hitbox; }
+    public void setHitbox(Hitbox hitbox) {
+        this.hitbox = Objects.requireNonNull(hitbox, "Hitbox cannot be null");
+    }
 
     @Override
     public void draw(SpriteBatch batch) {
