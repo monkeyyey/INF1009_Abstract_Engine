@@ -1,13 +1,13 @@
 # INF1009 Abstract Engine Project
 
-A libGDX game project organized into a reusable engine layer (`engine`) and game-specific layer (`game`).
+A libGDX simulation project organized into a reusable engine layer (`engine`) and simulation-specific layer (`simulation`).
 
 ## Project Structure
 
 - `core/src/main/java/com/myGame/engine/`
   Engine abstractions: entities, managers, physics, scenes, and core contracts.
-- `core/src/main/java/com/myGame/game/`
-  Game/demo entities, scenes, input sources, and UI entities.
+- `core/src/main/java/com/myGame/simulation/`
+  Simulation/demo entities, scenes, input sources, and UI entities.
 - `core/src/main/java/com/myGame/GameEngine.java`
   Application entry point and global scene/input/audio flow.
 - `assets/`
@@ -95,7 +95,7 @@ A libGDX game project organized into a reusable engine layer (`engine`) and game
 
 - `Scene` (abstract class)
 
-### Game Entities
+### Simulation Entities
 
 - `MovableTextureObject extends Entity implements iCollidable, iMovable` (abstract)
   - `Bucket extends MovableTextureObject`
@@ -110,7 +110,7 @@ A libGDX game project organized into a reusable engine layer (`engine`) and game
 - `Button extends Entity`
 - `VolumeSlider extends Entity`
 
-### Game Scenes
+### Simulation Scenes
 
 - `DemoScene1 extends Scene`
 - `DemoScene2 extends Scene`
@@ -133,7 +133,7 @@ A libGDX game project organized into a reusable engine layer (`engine`) and game
 - `engine/core/iCollidable.java`
   - `getHitbox`, `setHitbox`, `onCollision`
 - `engine/core/iMovable.java`
-  - position update + velocity accessors
+  - `updatePosition(float dt)`
 - `engine/core/InputSource.java`
   - `updateState(InputState state)`
 - `engine/core/InputState.java`
@@ -165,7 +165,7 @@ A libGDX game project organized into a reusable engine layer (`engine`) and game
   - owns managers and shared update pipeline
   - lifecycle hooks: `onEnter`, `onExit`, `dispose`
 
-## Game Layer
+## Simulation Layer
 
 ### DemoScene1 Highlights
 
