@@ -1,6 +1,6 @@
 package com.myGame.engine.physics;
 
-import com.myGame.engine.core.Collidable;
+import com.myGame.engine.core.iCollidable;
 import com.myGame.engine.entities.Entity;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,16 +13,16 @@ public class CollisionManager {
         List<Entity> all = new ArrayList<>(entities);
         for (int i = 0; i < all.size(); i++) {
             Entity ea = all.get(i);
-            if (!ea.isActive() || !(ea instanceof Collidable)) continue;
+            if (!ea.isActive() || !(ea instanceof iCollidable)) continue;
 
-            Collidable a = (Collidable) ea;
+            iCollidable a = (iCollidable) ea;
             if (a.getHitbox() == null) continue;
 
             for (int j = i + 1; j < all.size(); j++) {
                 Entity eb = all.get(j);
-                if (!eb.isActive() || !(eb instanceof Collidable)) continue;
+                if (!eb.isActive() || !(eb instanceof iCollidable)) continue;
 
-                Collidable b = (Collidable) eb;
+                iCollidable b = (iCollidable) eb;
                 if (b.getHitbox() == null) continue;
 
                 if (CollisionDetector.overlaps(
@@ -34,7 +34,7 @@ public class CollisionManager {
         }
     }
 
-    private void resolve(Collidable a, Entity ea, Collidable b, Entity eb) {
+    private void resolve(iCollidable a, Entity ea, iCollidable b, Entity eb) {
         a.onCollision(eb);
         b.onCollision(ea);
     }

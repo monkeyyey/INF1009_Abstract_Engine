@@ -66,21 +66,21 @@ A libGDX game project organized into a reusable engine layer (`engine`) and game
 
 ### Interfaces and Abstract Classes
 
-- Interfaces: `InputSource`, `Movable`, `Collidable`.
+- Interfaces: `InputSource`, `iMovable`, `iCollidable`.
 - Abstract classes: `Entity`, `Scene`, `Hitbox`, `MovableTextureObject`.
 
 ### Polymorphism
 
 - `EntityManager` draws mixed entity types via polymorphic `draw(...)`.
-- Physics managers process `Entity` collections and branch by interface contracts (`Movable`, `Collidable`).
+- Physics managers process `Entity` collections and branch by interface contracts (`iMovable`, `iCollidable`).
 - `InputManager` updates different `InputSource` implementations through one interface.
 
 ## Architecture Map (Inheritance / Implementation)
 
 ### Engine Core
 
-- `Collidable` (interface)
-- `Movable` (interface)
+- `iCollidable` (interface)
+- `iMovable` (interface)
 - `InputSource` (interface)
 - `InputState` (class)
 
@@ -97,12 +97,12 @@ A libGDX game project organized into a reusable engine layer (`engine`) and game
 
 ### Game Entities
 
-- `MovableTextureObject extends Entity implements Collidable, Movable` (abstract)
+- `MovableTextureObject extends Entity implements iCollidable, iMovable` (abstract)
   - `Bucket extends MovableTextureObject`
   - `Droplet extends MovableTextureObject`
   - `Wind extends MovableTextureObject`
-- `PlayerCircle extends Entity implements Collidable, Movable`
-- `RectangleWall extends Entity implements Collidable`
+- `PlayerCircle extends Entity implements iCollidable, iMovable`
+- `RectangleWall extends Entity implements iCollidable`
 - `StaticTextureEntity extends Entity`
 
 ### UI Entities
@@ -130,9 +130,9 @@ A libGDX game project organized into a reusable engine layer (`engine`) and game
 
 ### Core Contracts
 
-- `engine/core/Collidable.java`
+- `engine/core/iCollidable.java`
   - `getHitbox`, `setHitbox`, `onCollision`
-- `engine/core/Movable.java`
+- `engine/core/iMovable.java`
   - position update + velocity accessors
 - `engine/core/InputSource.java`
   - `updateState(InputState state)`
@@ -235,7 +235,7 @@ A libGDX game project organized into a reusable engine layer (`engine`) and game
   - Scene setup, per-frame game rules, input wiring, and HUD rendering are in the same classes.
 - Collision extensibility
   - `CollisionDetector` uses explicit type checks; adding new shape types requires editing detector logic.
-- `Collidable` breadth
+- `iCollidable` breadth
   - `setHitbox(...)` is required for all collidables even if some should be immutable.
 - Input manager keying
   - `InputManager` uses integer IDs; this works but can become fragile as projects scale.

@@ -1,23 +1,21 @@
-package com.myGame.game.entities;
+package com.myGame.simulation.entities;
 
 import com.myGame.engine.entities.Entity;
 
 public class Droplet extends MovableTextureObject {
     private boolean caught = false;
     private float fallSpeed = -200f;
-    private float windPushSpeed = 140f;
     private boolean touchedByWindThisFrame = false;
     private final Runnable onCaught;
 
-    public Droplet(String path, float x, float y, float width, float height, float fallSpeed, float windPushSpeed) {
-        this(path, x, y, width, height, fallSpeed, windPushSpeed, null);
+    public Droplet(String path, float x, float y, float width, float height, float fallSpeed) {
+        this(path, x, y, width, height, fallSpeed, null);
     }
 
     public Droplet(String path, float x, float y, float width, float height,
-                   float fallSpeed, float windPushSpeed, Runnable onCaught) {
+                   float fallSpeed, Runnable onCaught) {
         super(path, x, y, width, height);
         this.fallSpeed = fallSpeed;
-        this.windPushSpeed = windPushSpeed;
         this.onCaught = onCaught;
     }
 
@@ -37,25 +35,8 @@ public class Droplet extends MovableTextureObject {
 
     public void applyWindCollision(Wind wind) {
         touchedByWindThisFrame = true;
-        float windTop = wind.getY() + wind.getHeight();
-        boolean xOverlap = getX() < wind.getX() + wind.getWidth()
-                && getX() + getWidth() > wind.getX();
-        boolean onTop = xOverlap && Math.abs(getY() - windTop) <= 3f;
-
-        if (onTop) {
-            setVelocityX(0f);
-            setVelocityY(0f);
-            return;
-        }
-
-        float dCenterX = getX() + getWidth() / 2f;
-        float wCenterX = wind.getX() + wind.getWidth() / 2f;
         setVelocityY(fallSpeed);
-        if (dCenterX < wCenterX) {
-            setVelocityX(-windPushSpeed);
-        } else {
-            setVelocityX(windPushSpeed);
-        }
+        setVelocityX(wind.getVelocityX());
     }
 
     public void endFrame() {

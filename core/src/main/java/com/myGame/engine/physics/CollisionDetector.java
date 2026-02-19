@@ -4,8 +4,9 @@ import com.myGame.engine.entities.CircleHitbox;
 import com.myGame.engine.entities.Hitbox;
 import com.myGame.engine.entities.RectHitbox;
 
-class CollisionDetector {
-    static boolean overlaps(Hitbox a, float ax, float ay, Hitbox b, float bx, float by) {
+public final class CollisionDetector {
+    
+    public static boolean overlaps(Hitbox a, float ax, float ay, Hitbox b, float bx, float by) {
         if (a instanceof CircleHitbox && b instanceof CircleHitbox) {
             return checkCircleCircle((CircleHitbox) a, ax, ay, (CircleHitbox) b, bx, by);
         }

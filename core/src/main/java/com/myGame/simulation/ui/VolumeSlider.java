@@ -1,4 +1,4 @@
-package com.myGame.game.ui;
+package com.myGame.simulation.ui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;

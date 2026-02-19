@@ -1,23 +1,23 @@
-package com.myGame.game.entities;
+package com.myGame.simulation.entities;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.myGame.engine.core.Collidable;
+import com.myGame.engine.core.iCollidable;
 import com.myGame.engine.core.InputState;
-import com.myGame.engine.core.Movable;
+import com.myGame.engine.core.iMovable;
 import com.myGame.engine.entities.CircleHitbox;
 import com.myGame.engine.entities.Entity;
 import com.myGame.engine.entities.Hitbox;
 import java.util.Objects;
 
-public class PlayerCircle extends Entity implements Collidable, Movable {
+public class PlayerCircle extends Entity implements iCollidable, iMovable {
     private final float radius;
     private final float speed;
     private final float minX;
     private final float maxX;
     private final float minY;
     private final float maxY;
-    private final Color color;
+    private Color color;
     private Hitbox hitbox;
     private float vx;
     private float vy;
@@ -80,6 +80,9 @@ public class PlayerCircle extends Entity implements Collidable, Movable {
             setY(previousY);
             setVelocityX(0f);
             setVelocityY(0f);
+        } else if (other instanceof PlayerCircle) {
+            setColor(Color.WHITE);
+            ((PlayerCircle) other).setColor(Color.WHITE);
         }
     }
 
@@ -95,19 +98,19 @@ public class PlayerCircle extends Entity implements Collidable, Movable {
         this.hitbox = hitbox;
     }
 
-    @Override
     public float getVelocityX() { return vx; }
 
-    @Override
     public void setVelocityX(float vx) { this.vx = vx; }
 
-    @Override
     public float getVelocityY() { return vy; }
 
-    @Override
     public void setVelocityY(float vy) { this.vy = vy; }
 
     public float getRadius() { return radius; }
+
+    public void setColor(Color color) {
+        this.color = Objects.requireNonNull(color, "Color cannot be null");
+    }
 
     @Override
     public void dispose() {

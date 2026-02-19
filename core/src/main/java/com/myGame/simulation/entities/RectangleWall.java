@@ -1,14 +1,14 @@
-package com.myGame.game.entities;
+package com.myGame.simulation.entities;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.myGame.engine.core.Collidable;
+import com.myGame.engine.core.iCollidable;
 import com.myGame.engine.entities.Entity;
 import com.myGame.engine.entities.Hitbox;
 import com.myGame.engine.entities.RectHitbox;
 import java.util.Objects;
 
-public class RectangleWall extends Entity implements Collidable {
+public class RectangleWall extends Entity implements iCollidable {
     private RectHitbox hitbox;
     private final float width;
     private final float height;

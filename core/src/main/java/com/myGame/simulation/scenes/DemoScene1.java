@@ -1,4 +1,4 @@
-package com.myGame.game.scenes;
+package com.myGame.simulation.scenes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -11,12 +11,12 @@ import com.myGame.engine.core.InputState;
 import com.myGame.engine.managers.AudioManager;
 import com.myGame.engine.managers.InputManager;
 import com.myGame.engine.scenes.Scene;
-import com.myGame.game.entities.Bucket;
-import com.myGame.game.entities.Droplet;
-import com.myGame.game.entities.StaticTextureEntity;
-import com.myGame.game.entities.Wind;
-import com.myGame.game.input.KeyboardCustomInputSource;
-import com.myGame.game.input.KeyboardWASDInputSource;
+import com.myGame.simulation.entities.Bucket;
+import com.myGame.simulation.entities.Droplet;
+import com.myGame.simulation.entities.StaticTextureEntity;
+import com.myGame.simulation.entities.Wind;
+import com.myGame.simulation.input.KeyboardCustomInputSource;
+import com.myGame.simulation.input.KeyboardWASDInputSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,6 @@ public class DemoScene1 extends Scene {
     private static final int TARGET_SCORE = 100;
     private static final int DROPLET_COUNT = 10;
     private static final float DROPLET_FALL_SPEED = -200f;
-    private static final float WIND_PUSH_SPEED = 140f;
 
     private final InputManager inputManager;
     private final AudioManager audioManager;
@@ -215,7 +214,7 @@ public class DemoScene1 extends Scene {
             float dropX = MathUtils.random(0f, screenW - 64f);
             Droplet droplet = new Droplet(
                     "droplet.png", dropX, dropY + i * 60f, 64f, 64f,
-                    DROPLET_FALL_SPEED, WIND_PUSH_SPEED,
+                    DROPLET_FALL_SPEED,
                     () -> audioManager.playSound("water_droplet"));
             droplet.setVelocityY(DROPLET_FALL_SPEED);
             droplets.add(droplet);

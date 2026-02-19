@@ -1,4 +1,4 @@
-package com.myGame.game.entities;
+package com.myGame.simulation.entities;
 
 import com.myGame.engine.core.InputState;
 import com.myGame.engine.entities.Entity;

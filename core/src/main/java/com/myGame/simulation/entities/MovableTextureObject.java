@@ -1,7 +1,7 @@
-package com.myGame.game.entities;
+package com.myGame.simulation.entities;
 
-import com.myGame.engine.core.Collidable;
-import com.myGame.engine.core.Movable;
+import com.myGame.engine.core.iCollidable;
+import com.myGame.engine.core.iMovable;
 import com.myGame.engine.entities.Entity;
 import com.myGame.engine.entities.Hitbox;
 import com.myGame.engine.entities.RectHitbox;
@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
 import java.util.Objects;
 
-public abstract class MovableTextureObject extends Entity implements Collidable, Movable {
+public abstract class MovableTextureObject extends Entity implements iCollidable, iMovable {
     private final Texture texture;
     private final float width;
     private final float height;
@@ -38,16 +38,12 @@ public abstract class MovableTextureObject extends Entity implements Collidable,
         setY(getY() + vy * dt);
     }
 
-    @Override
     public float getVelocityX() { return vx; }
 
-    @Override
     public void setVelocityX(float vx) { this.vx = vx; }
 
-    @Override
     public float getVelocityY() { return vy; }
 
-    @Override
     public void setVelocityY(float vy) { this.vy = vy; }
 
     @Override

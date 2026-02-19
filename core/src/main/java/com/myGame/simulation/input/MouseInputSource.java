@@ -1,4 +1,4 @@
-package com.myGame.game.input;
+package com.myGame.simulation.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

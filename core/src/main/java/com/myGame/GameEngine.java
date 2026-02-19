@@ -10,9 +10,9 @@ import com.myGame.engine.managers.InputManager;
 import com.myGame.engine.managers.AudioManager;
 import com.myGame.engine.managers.SceneManager;
 import com.myGame.engine.scenes.Scene;
-import com.myGame.game.scenes.DemoScene1;
-import com.myGame.game.scenes.DemoScene2;
-import com.myGame.game.scenes.PauseScene;
+import com.myGame.simulation.scenes.DemoScene1;
+import com.myGame.simulation.scenes.DemoScene2;
+import com.myGame.simulation.scenes.PauseScene;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class GameEngine extends ApplicationAdapter {

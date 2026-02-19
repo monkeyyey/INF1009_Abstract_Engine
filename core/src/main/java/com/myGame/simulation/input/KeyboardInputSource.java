@@ -1,4 +1,4 @@
-package com.myGame.game.input;
+package com.myGame.simulation.input;
 
 import com.myGame.engine.core.InputSource;
 import com.myGame.engine.core.InputState;

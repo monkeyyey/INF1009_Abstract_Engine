@@ -1,4 +1,4 @@
-package com.myGame.game.scenes;
+package com.myGame.simulation.scenes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -11,10 +11,10 @@ import com.myGame.engine.core.InputState;
 import com.myGame.engine.managers.InputManager;
 import com.myGame.engine.managers.AudioManager;
 import com.myGame.engine.scenes.Scene;
-import com.myGame.game.input.MouseClickInputSource;
-import com.myGame.game.input.PauseInputSource;
-import com.myGame.game.ui.Button;
-import com.myGame.game.ui.VolumeSlider;
+import com.myGame.simulation.input.MouseClickInputSource;
+import com.myGame.simulation.input.PauseInputSource;
+import com.myGame.simulation.ui.Button;
+import com.myGame.simulation.ui.VolumeSlider;
 
 public class PauseScene extends Scene {
     private static final int PAUSE_INPUT_ID = 100;
