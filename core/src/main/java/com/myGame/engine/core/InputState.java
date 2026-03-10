@@ -2,7 +2,8 @@ package com.myGame.engine.core;
 
 public class InputState {
     private boolean up, down, left, right;
-    private boolean action1, action2, pause;
+    private boolean action1, action2, pause, quit;
+    private boolean prevAction1, prevAction2;
     private float pointerX;
     private float pointerY;
     private boolean justTouched;
@@ -15,9 +16,17 @@ public class InputState {
         this.action1 = other.action1;
         this.action2 = other.action2;
         this.pause = other.pause;
+        this.quit = other.quit;
+        this.prevAction1 = other.prevAction1;
+        this.prevAction2 = other.prevAction2;
         this.pointerX = other.pointerX;
         this.pointerY = other.pointerY;
         this.justTouched = other.justTouched;
+    }
+
+    public void beginFrameCapture() {
+        this.prevAction1 = this.action1;
+        this.prevAction2 = this.action2;
     }
 
     // Getters and Setters
@@ -30,11 +39,15 @@ public class InputState {
     public boolean isRight() { return right; }
     public void setRight(boolean right) { this.right = right; }
     public boolean isAction1() { return action1; }
+    public boolean isAction1JustPressed() { return action1 && !prevAction1; }
     public void setAction1(boolean action1) { this.action1 = action1; }
     public boolean isAction2() { return action2; }
+    public boolean isAction2JustPressed() { return action2 && !prevAction2; }
     public void setAction2(boolean action2) { this.action2 = action2; }
     public boolean isPause() { return pause; }
     public void setPause(boolean pause) { this.pause = pause; }
+    public boolean isQuit() { return quit; }
+    public void setQuit(boolean quit) { this.quit = quit; }
     public float getPointerX() { return pointerX; }
     public void setPointerX(float pointerX) { this.pointerX = pointerX; }
     public float getPointerY() { return pointerY; }

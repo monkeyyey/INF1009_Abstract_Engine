@@ -22,8 +22,11 @@ public class InputManager {
     }
 
     public void update() {
-        for(Integer id : inputSources.keySet()) {
-            inputSources.get(id).updateState(inputStates.get(id));
+        for (Map.Entry<Integer, InputSource> entry : inputSources.entrySet()) {
+            InputState state = inputStates.get(entry.getKey());
+            if (state == null) continue;
+            state.beginFrameCapture();
+            entry.getValue().updateState(state);
         }
     }
 

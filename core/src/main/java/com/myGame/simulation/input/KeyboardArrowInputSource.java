@@ -13,5 +13,7 @@ public class KeyboardArrowInputSource implements InputSource {
         state.setUp(Gdx.input.isKeyPressed(Input.Keys.UP));
         state.setDown(Gdx.input.isKeyPressed(Input.Keys.DOWN));
         state.setAction1(Gdx.input.isKeyPressed(Input.Keys.SPACE));
+        state.setAction2(Gdx.input.isKeyPressed(Input.Keys.R));
+        state.setQuit(Gdx.input.isKeyPressed(Input.Keys.Q));
     }
 }

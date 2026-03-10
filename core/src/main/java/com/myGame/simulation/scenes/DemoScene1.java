@@ -10,6 +10,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.myGame.engine.core.InputState;
 import com.myGame.engine.managers.AudioManager;
 import com.myGame.engine.managers.InputManager;
+import com.myGame.engine.managers.EntityManager;
+import com.myGame.engine.physics.CollisionManager;
+import com.myGame.engine.physics.MovementManager;
 import com.myGame.engine.scenes.Scene;
 import com.myGame.simulation.entities.Bucket;
 import com.myGame.simulation.entities.Droplet;
@@ -17,6 +20,7 @@ import com.myGame.simulation.entities.StaticTextureEntity;
 import com.myGame.simulation.entities.Wind;
 import com.myGame.simulation.input.KeyboardCustomInputSource;
 import com.myGame.simulation.input.KeyboardWASDInputSource;
+import com.myGame.simulation.ui.GameFontFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +49,12 @@ public class DemoScene1 extends Scene {
     private float elapsedTime;
     private float completionTime;
 
-    public DemoScene1(InputManager inputManager, AudioManager audioManager) {
-        super();
+    public DemoScene1(InputManager inputManager,
+                      AudioManager audioManager,
+                      EntityManager entityManager,
+                      CollisionManager collisionManager,
+                      MovementManager movementManager) {
+        super(entityManager, collisionManager, movementManager);
         this.inputManager = inputManager;
         this.audioManager = audioManager;
     }
@@ -64,7 +72,7 @@ public class DemoScene1 extends Scene {
         if (initialized) return;
         initialized = true;
 
-        hudFont = new BitmapFont();
+        hudFont = GameFontFactory.regular(24);
         hudFont.setColor(Color.WHITE);
 
         float screenW = Gdx.graphics.getWidth();

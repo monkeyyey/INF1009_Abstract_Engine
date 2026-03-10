@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.myGame.engine.core.InputState;
 import com.myGame.engine.managers.InputManager;
 import com.myGame.engine.managers.AudioManager;
+import com.myGame.engine.managers.EntityManager;
+import com.myGame.engine.physics.CollisionManager;
+import com.myGame.engine.physics.MovementManager;
 import com.myGame.engine.scenes.Scene;
 import com.myGame.simulation.entities.RectangleWall;
 import com.myGame.simulation.entities.PlayerCircle;
@@ -25,8 +28,12 @@ public class DemoScene2 extends Scene {
     private final List<RectangleWall> rects = new ArrayList<>();
     private boolean initialized = false;
 
-    public DemoScene2(InputManager inputManager, AudioManager audioManager) {
-        super();
+    public DemoScene2(InputManager inputManager,
+                      AudioManager audioManager,
+                      EntityManager entityManager,
+                      CollisionManager collisionManager,
+                      MovementManager movementManager) {
+        super(entityManager, collisionManager, movementManager);
         this.inputManager = inputManager;
         this.audioManager = audioManager;
     }
@@ -49,7 +56,7 @@ public class DemoScene2 extends Scene {
             float screenH = Gdx.graphics.getHeight();
             float topY = screenH - PLAYER_RADIUS - EDGE_PADDING;
 
-            /// Create Players
+            /// Create Players 
             arrowPlayer = new PlayerCircle(PLAYER_RADIUS + EDGE_PADDING, topY, PLAYER_RADIUS, PLAYER_SPEED,
                     0f, screenW, 0f, screenH, Color.GREEN);
             mousePlayer = new PlayerCircle(screenW - PLAYER_RADIUS - EDGE_PADDING, topY, PLAYER_RADIUS, PLAYER_SPEED,

@@ -13,7 +13,7 @@ public class PauseInputSource implements InputSource {
         state.setLeft(Gdx.input.isKeyPressed(Input.Keys.LEFT));
         state.setRight(Gdx.input.isKeyPressed(Input.Keys.RIGHT));
         state.setAction1(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE));
-        state.setAction2(false);
+        state.setAction2(Gdx.input.isKeyJustPressed(Input.Keys.Q));
         state.setPause(false);
     }
 }

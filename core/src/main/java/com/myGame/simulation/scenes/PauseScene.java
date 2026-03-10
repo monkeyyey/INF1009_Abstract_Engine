@@ -10,10 +10,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.myGame.engine.core.InputState;
 import com.myGame.engine.managers.InputManager;
 import com.myGame.engine.managers.AudioManager;
+import com.myGame.engine.managers.EntityManager;
+import com.myGame.engine.physics.CollisionManager;
+import com.myGame.engine.physics.MovementManager;
 import com.myGame.engine.scenes.Scene;
 import com.myGame.simulation.input.MouseClickInputSource;
 import com.myGame.simulation.input.PauseInputSource;
 import com.myGame.simulation.ui.Button;
+import com.myGame.simulation.ui.GameFontFactory;
 import com.myGame.simulation.ui.VolumeSlider;
 
 public class PauseScene extends Scene {
@@ -34,8 +38,14 @@ public class PauseScene extends Scene {
     private Button quitButton;
     private VolumeSlider volumeSlider;
 
-    public PauseScene(InputManager pauseInputManager, AudioManager audioManager, Runnable onResume, Runnable onQuit) {
-        super();
+    public PauseScene(InputManager pauseInputManager,
+                      AudioManager audioManager,
+                      Runnable onResume,
+                      Runnable onQuit,
+                      EntityManager entityManager,
+                      CollisionManager collisionManager,
+                      MovementManager movementManager) {
+        super(entityManager, collisionManager, movementManager);
         this.pauseInputManager = pauseInputManager;
         this.audioManager = audioManager;
         this.onResume = onResume;
@@ -45,7 +55,7 @@ public class PauseScene extends Scene {
     @Override
     public void onEnter() {
         if (!initialized) {
-            font = new BitmapFont();
+            font = GameFontFactory.regular(24);
             glyphLayout = new GlyphLayout();
             initialized = true;
         }
@@ -96,8 +106,12 @@ public class PauseScene extends Scene {
             return;
         }
 
-        if (input.isAction1()) {
+        if (input.isAction1JustPressed()) {
             onResume.run();
+            return;
+        }
+        if (input.isAction2JustPressed()) {
+            onQuit.run();
             return;
         }
 
@@ -137,8 +151,15 @@ public class PauseScene extends Scene {
 
         batch.begin();
         font.setColor(Color.WHITE);
-        font.draw(batch, "Volume: " + Math.round(musicVolume * 100f) + "%", sliderX, sliderY + 45f);
-        font.draw(batch, "UP/RIGHT louder, DOWN/LEFT quieter. ESC to resume", sliderX, sliderY - 18f);
+        String volumeText = "Volume: " + Math.round(musicVolume * 100f) + "%";
+        glyphLayout.setText(font, volumeText);
+        float volumeTextX = sliderX + (volumeSlider.getWidth() - glyphLayout.width) * 0.5f;
+        font.draw(batch, glyphLayout, volumeTextX, sliderY + 45f);
+
+        String helpText = "UP/RIGHT louder, DOWN/LEFT quieter. ESC resume, Q quit";
+        glyphLayout.setText(font, helpText);
+        float helpTextX = sliderX + (volumeSlider.getWidth() - glyphLayout.width) * 0.5f;
+        font.draw(batch, glyphLayout, helpTextX, sliderY - 18f);
         drawCenteredButtonLabel(batch, resumeButton);
         drawCenteredButtonLabel(batch, quitButton);
         batch.end();

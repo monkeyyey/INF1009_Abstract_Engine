@@ -5,16 +5,19 @@ import com.myGame.engine.physics.CollisionManager;
 import com.myGame.engine.physics.MovementManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import java.util.Objects;
 
 public abstract class Scene {
     protected final EntityManager entityManager;
     protected final CollisionManager collisionManager;
     protected final MovementManager movementManager;
 
-    public Scene() {
-        entityManager = new EntityManager();
-        collisionManager = new CollisionManager();
-        movementManager = new MovementManager();
+    protected Scene(EntityManager entityManager,
+                    CollisionManager collisionManager,
+                    MovementManager movementManager) {
+        this.entityManager = Objects.requireNonNull(entityManager, "EntityManager cannot be null");
+        this.collisionManager = Objects.requireNonNull(collisionManager, "CollisionManager cannot be null");
+        this.movementManager = Objects.requireNonNull(movementManager, "MovementManager cannot be null");
     }
 
     public abstract void onEnter();
