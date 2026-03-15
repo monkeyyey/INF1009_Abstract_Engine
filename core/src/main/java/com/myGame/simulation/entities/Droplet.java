@@ -1,6 +1,6 @@
 package com.myGame.simulation.entities;
 
-import com.myGame.engine.entities.Entity;
+import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
 
 public class Droplet extends MovableTextureObject {
     private boolean caught = false;

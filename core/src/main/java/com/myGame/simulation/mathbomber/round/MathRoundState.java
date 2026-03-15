@@ -49,7 +49,7 @@ public class MathRoundState {
 
     public boolean consumeBomb() {
         if (bombsRemaining <= 0) {
-            return false;
+            return     false;
         }
         bombsRemaining--;
         return true;

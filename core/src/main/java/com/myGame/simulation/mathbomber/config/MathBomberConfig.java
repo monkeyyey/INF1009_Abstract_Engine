@@ -37,8 +37,8 @@ public class MathBomberConfig {
     public final int enemyCount;
     public final int minAddend;
     public final int maxAddend;
-    public final int minAnswer;
-    public final int maxAnswer;
+    public final int multiplicationMinOperand;
+    public final int multiplicationMaxOperand;
     public final float questionTimeSeconds;
     public final int bombsPerQuestion;
 
@@ -63,8 +63,8 @@ public class MathBomberConfig {
                             int enemyCount,
                             int minAddend,
                             int maxAddend,
-                            int minAnswer,
-                            int maxAnswer,
+                            int multiplicationMinOperand,
+                            int multiplicationMaxOperand,
                             float questionTimeSeconds,
                             int bombsPerQuestion,
                             float playerSpeedUnitsPerSec,
@@ -83,8 +83,8 @@ public class MathBomberConfig {
         this.enemyCount = enemyCount;
         this.minAddend = minAddend;
         this.maxAddend = maxAddend;
-        this.minAnswer = minAnswer;
-        this.maxAnswer = maxAnswer;
+        this.multiplicationMinOperand = multiplicationMinOperand;
+        this.multiplicationMaxOperand = multiplicationMaxOperand;
         this.questionTimeSeconds = questionTimeSeconds;
         this.bombsPerQuestion = bombsPerQuestion;
         this.playerSpeedUnitsPerSec = playerSpeedUnitsPerSec;
@@ -104,10 +104,10 @@ public class MathBomberConfig {
                 9, 11, tile,
                 3, 3,
                 1, 5,
-                2, 10,
+                1, 5,
                 60f, 5,
                 tile / 0.36f,
-                0.48f,
+                0.60f,
                 1.8f,
                 0.20f,
                 2,
@@ -123,8 +123,8 @@ public class MathBomberConfig {
                 11, 13, tile,
                 4, 4,
                 5, 10,
-                1, 20,
-                60f, 5,
+                6, 10,
+                45f, 4,
                 tile / 0.36f,
                 0.48f,
                 1.8f,
@@ -142,10 +142,10 @@ public class MathBomberConfig {
                 11, 13, tile,
                 5, 6,
                 20, 50,
-                40, 100,
-                60f, 5,
+                11, 20,
+                30f, 3,
                 tile / 0.36f,
-                0.48f,
+                0.36f,
                 1.8f,
                 0.20f,
                 2,
@@ -154,4 +154,5 @@ public class MathBomberConfig {
                 "Hard"
         );
     }
+
 }

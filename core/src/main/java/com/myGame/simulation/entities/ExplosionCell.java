@@ -2,15 +2,16 @@ package com.myGame.simulation.entities;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.myGame.engine.core.iCollidable;
-import com.myGame.engine.core.iMovable;
-import com.myGame.engine.entities.Entity;
-import com.myGame.engine.entities.Hitbox;
-import com.myGame.engine.entities.RectHitbox;
+import com.myGame.engine.Collision.Hitboxes.Hitbox;
+import com.myGame.engine.Collision.Hitboxes.RectHitbox;
+import com.myGame.engine.Collision.Interfaces.iCollidable;
+import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
+import com.myGame.engine.EntityManagement.Interfaces.iTickable;
+import com.myGame.simulation.interfaces.ExplosionTarget;
 
 import java.util.Objects;
 
-public class ExplosionCell extends Entity implements iMovable, iCollidable {
+public class ExplosionCell extends Entity implements iTickable, iCollidable {
     private final int row;
     private final int col;
     private final float tileSize;
@@ -35,7 +36,7 @@ public class ExplosionCell extends Entity implements iMovable, iCollidable {
     }
 
     @Override
-    public void updatePosition(float dt) {
+    public void tick(float dt) {
         timeLeft -= dt;
     }
 

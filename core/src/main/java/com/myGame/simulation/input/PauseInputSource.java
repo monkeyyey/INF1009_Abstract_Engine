@@ -2,8 +2,8 @@ package com.myGame.simulation.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.myGame.engine.core.InputSource;
-import com.myGame.engine.core.InputState;
+import com.myGame.engine.InputManagement.Interfaces.InputSource;
+import com.myGame.engine.InputManagement.Interfaces.InputState;
 
 public class PauseInputSource implements InputSource {
     @Override

@@ -6,22 +6,24 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.myGame.engine.managers.AudioManager;
-import com.myGame.engine.managers.EntityManager;
-import com.myGame.engine.managers.InputManager;
-import com.myGame.engine.managers.SceneManager;
-import com.myGame.engine.physics.CollisionManager;
-import com.myGame.engine.physics.MovementManager;
-import com.myGame.engine.scenes.Scene;
+import com.myGame.engine.Animation.AnimationManager;
+import com.myGame.engine.AudioManagement.AudioManager;
+import com.myGame.engine.Collision.CollisionManager;
+import com.myGame.engine.Collision.LifecycleManager;
+import com.myGame.engine.EntityManagement.EntityManager;
+import com.myGame.engine.InputManagement.InputManager;
+import com.myGame.engine.Movement.MovementManager;
+import com.myGame.engine.SceneManagement.SceneManager;
+import com.myGame.engine.SceneManagement.abstractScenes.Scene;
 import com.myGame.simulation.input.PauseInputSource;
+import com.myGame.simulation.mathBomberScenes.GameScene;
+import com.myGame.simulation.mathBomberScenes.StartMenuScene;
+import com.myGame.simulation.mathBomberScenes.EndScene;
+import com.myGame.simulation.mathBomberScenes.PauseScene;
 import com.myGame.simulation.mathbomber.config.ControlScheme;
 import com.myGame.simulation.mathbomber.config.MathBomberConfig;
 import com.myGame.simulation.mathbomber.config.MathBomberGameStats;
 import com.myGame.simulation.mathbomber.config.QuestionMode;
-import com.myGame.simulation.scenes.MathBomberScene;
-import com.myGame.simulation.scenes.MathBomberStartMenuScene;
-import com.myGame.simulation.scenes.MathBomberWinScene;
-import com.myGame.simulation.scenes.PauseScene;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class GameEngine extends ApplicationAdapter {
@@ -32,9 +34,9 @@ public class GameEngine extends ApplicationAdapter {
     private SceneManager sceneManager;
     private InputManager inputManager;
     private AudioManager audioManager;
-    private MathBomberStartMenuScene startMenuScene;
-    private MathBomberScene mathBomberScene;
-    private MathBomberWinScene endScene;
+    private StartMenuScene startMenuScene;
+    private GameScene mathBomberScene;
+    private EndScene endScene;
     private PauseScene pauseScene;
 
     @Override
@@ -47,12 +49,12 @@ public class GameEngine extends ApplicationAdapter {
         sceneManager = new SceneManager();
         inputManager.addInputSource(GLOBAL_PAUSE_INPUT_ID, new PauseInputSource());
 
-        loadSoundWithFallback("explosion", "explosion.wav", "water_droplet.wav");
-        loadSoundWithFallback("beep", "beep.wav", "water_droplet.wav");
-        loadSoundWithFallback("ding", "ding.wav", "water_droplet.wav");
-        loadSoundWithFallback("failure", "failure.wav", "water_droplet.wav");
-        audioManager.loadMusic("calm", "calm_background_music.mp3");
-        audioManager.loadMusic("intense", "intense_background_music.mp3");
+        loadSoundWithFallback("explosion", "SFX/explosion.wav", "SFX/water_droplet.wav");
+        loadSoundWithFallback("beep", "SFX/beep.wav", "SFX/water_droplet.wav");
+        loadSoundWithFallback("ding", "SFX/ding.wav", "SFX/water_droplet.wav");
+        loadSoundWithFallback("failure", "SFX/failure.wav", "SFX/water_droplet.wav");
+        audioManager.loadMusic("calm", "backgroundMusic/calm_background_music.mp3");
+        audioManager.loadMusic("intense", "backgroundMusic/intense_background_music.mp3");
         audioManager.setMusicTrackVolume("calm", 0.55f);
         audioManager.setMusicTrackVolume("intense", 0.35f);
 
@@ -61,18 +63,14 @@ public class GameEngine extends ApplicationAdapter {
                 audioManager,
                 () -> sceneManager.popScene(),
                 this::handlePauseQuit,
-                new EntityManager(),
-                new CollisionManager(),
-                new MovementManager());
+                new EntityManager());
 
-        startMenuScene = new MathBomberStartMenuScene(
+        startMenuScene = new StartMenuScene(
                 inputManager,
                 audioManager,
                 this::startMathBomberGame,
                 () -> Gdx.app.exit(),
-                new EntityManager(),
-                new CollisionManager(),
-                new MovementManager());
+                new EntityManager());
         sceneManager.setScene(startMenuScene);
     }
 
@@ -97,7 +95,7 @@ public class GameEngine extends ApplicationAdapter {
     private void handleGlobalInput() {
         Scene activeScene = sceneManager.getActiveScene();
         boolean paused = activeScene instanceof PauseScene;
-        boolean inGame = activeScene instanceof MathBomberScene;
+        boolean inGame = activeScene instanceof GameScene;
         boolean pausePressed = inputManager.getState(GLOBAL_PAUSE_INPUT_ID) != null
                 && inputManager.getState(GLOBAL_PAUSE_INPUT_ID).isAction1JustPressed();
 
@@ -108,12 +106,14 @@ public class GameEngine extends ApplicationAdapter {
     }
 
     private void startMathBomberGame(MathBomberConfig config, ControlScheme controls, QuestionMode questionMode) {
-        mathBomberScene = new MathBomberScene(
+        mathBomberScene = new GameScene(
                 inputManager,
                 audioManager,
                 new EntityManager(),
                 new CollisionManager(),
                 new MovementManager(),
+                new LifecycleManager(),
+                new AnimationManager(),
                 config,
                 controls,
                 questionMode,
@@ -134,15 +134,13 @@ public class GameEngine extends ApplicationAdapter {
     }
 
     private void showEndScene(MathBomberGameStats stats, boolean didWin) {
-        endScene = new MathBomberWinScene(
+        endScene = new EndScene(
                 inputManager,
                 stats,
                 didWin,
                 () -> Gdx.app.exit(),
                 () -> sceneManager.setScene(startMenuScene),
-                new EntityManager(),
-                new CollisionManager(),
-                new MovementManager());
+                new EntityManager());
         sceneManager.setScene(endScene);
     }
 

@@ -24,23 +24,17 @@ public class ArithmeticQuestionGenerator {
 
     private final int minAddend;
     private final int maxAddend;
-    private final int minAnswer;
-    private final int maxAnswer;
     private final QuestionMode questionMode;
 
-    public ArithmeticQuestionGenerator(int minAddend, int maxAddend, int minAnswer, int maxAnswer) {
-        this(minAddend, maxAddend, minAnswer, maxAnswer, QuestionMode.BOTH);
+    public ArithmeticQuestionGenerator(int minAddend, int maxAddend) {
+        this(minAddend, maxAddend, QuestionMode.BOTH);
     }
 
     public ArithmeticQuestionGenerator(int minAddend,
                                      int maxAddend,
-                                     int minAnswer,
-                                     int maxAnswer,
                                      QuestionMode questionMode) {
         this.minAddend = minAddend;
         this.maxAddend = maxAddend;
-        this.minAnswer = minAnswer;
-        this.maxAnswer = maxAnswer;
         this.questionMode = questionMode == null ? QuestionMode.BOTH : questionMode;
     }
 
@@ -63,15 +57,40 @@ public class ArithmeticQuestionGenerator {
         }
     }
 
-    public List<Integer> buildEnemyValues(int answer, int enemyCount) {
+    public List<Integer> buildEnemyValues(int answer, int enemyCount, Operation operation) {
         List<Integer> values = new ArrayList<>();
         values.add(answer);
+        Operation resolvedOperation = operation == null ? pickOperation() : operation;
+        int minAnswer = derivedMinAnswer(resolvedOperation);
+        int maxAnswer = derivedMaxAnswer(resolvedOperation);
         while (values.size() < enemyCount) {
             int value = MathUtils.random(minAnswer, maxAnswer);
             if (value == answer) continue;
             values.add(value);
         }
         return values;
+    }
+
+    private int derivedMinAnswer(Operation operation) {
+        switch (operation) {
+            case ADDITION:
+                return minAddend + minAddend;
+            case MULTIPLICATION:
+                return minAddend * minAddend;
+            default:
+                return minAddend + minAddend;
+        }
+    }
+
+    private int derivedMaxAnswer(Operation operation) {
+        switch (operation) {
+            case ADDITION:
+                return maxAddend + maxAddend;
+            case MULTIPLICATION:
+                return maxAddend * maxAddend;
+            default:
+                return maxAddend + maxAddend;
+        }
     }
 
     public static final class ArithmeticQuestion {

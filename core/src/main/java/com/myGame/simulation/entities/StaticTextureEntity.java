@@ -2,7 +2,8 @@ package com.myGame.simulation.entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.myGame.engine.entities.Entity;
+import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
+
 import java.util.Objects;
 
 public class StaticTextureEntity extends Entity {

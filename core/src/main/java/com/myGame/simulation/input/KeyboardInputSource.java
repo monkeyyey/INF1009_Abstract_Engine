@@ -1,7 +1,7 @@
 package com.myGame.simulation.input;
 
-import com.myGame.engine.core.InputSource;
-import com.myGame.engine.core.InputState;
+import com.myGame.engine.InputManagement.Interfaces.InputSource;
+import com.myGame.engine.InputManagement.Interfaces.InputState;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 

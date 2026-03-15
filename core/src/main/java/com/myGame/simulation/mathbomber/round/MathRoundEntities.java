@@ -1,6 +1,6 @@
 package com.myGame.simulation.mathbomber.round;
 
-import com.myGame.engine.managers.EntityManager;
+import com.myGame.engine.EntityManagement.EntityManager;
 import com.myGame.simulation.entities.ExplosionCell;
 import com.myGame.simulation.entities.MathBomb;
 import com.myGame.simulation.entities.MathEnemy;

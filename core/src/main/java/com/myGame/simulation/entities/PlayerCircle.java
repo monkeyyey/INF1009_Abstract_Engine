@@ -2,12 +2,13 @@ package com.myGame.simulation.entities;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.myGame.engine.core.iCollidable;
-import com.myGame.engine.core.InputState;
-import com.myGame.engine.core.iMovable;
-import com.myGame.engine.entities.CircleHitbox;
-import com.myGame.engine.entities.Entity;
-import com.myGame.engine.entities.Hitbox;
+import com.myGame.engine.Collision.Hitboxes.CircleHitbox;
+import com.myGame.engine.Collision.Hitboxes.Hitbox;
+import com.myGame.engine.Collision.Interfaces.iCollidable;
+import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
+import com.myGame.engine.InputManagement.Interfaces.InputState;
+import com.myGame.engine.Movement.Interfaces.iMovable;
+
 import java.util.Objects;
 
 public class PlayerCircle extends Entity implements iCollidable, iMovable {

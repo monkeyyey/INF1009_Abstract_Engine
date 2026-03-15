@@ -1,9 +1,9 @@
 package com.myGame.simulation.mathbomber.factory;
 
-import com.myGame.engine.entities.Entity;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
 
 public class EntityFactoryRegistry {
     private final Map<Class<? extends Entity>, EntityFactory<? extends Entity, ?>> factories = new HashMap<>();

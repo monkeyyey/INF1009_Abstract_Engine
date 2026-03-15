@@ -2,9 +2,9 @@ package com.myGame.simulation.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.myGame.engine.core.InputSource;
-import com.myGame.engine.core.InputState;
-import com.myGame.engine.entities.Entity;
+import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
+import com.myGame.engine.InputManagement.Interfaces.InputSource;
+import com.myGame.engine.InputManagement.Interfaces.InputState;
 
 public class MouseInputSource implements InputSource {
     private static final float DEFAULT_DEADZONE = 10f;

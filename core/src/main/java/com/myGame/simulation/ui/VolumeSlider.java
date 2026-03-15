@@ -2,7 +2,7 @@ package com.myGame.simulation.ui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.myGame.engine.entities.Entity;
+import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
 
 public class VolumeSlider extends Entity {
     private final float width;
