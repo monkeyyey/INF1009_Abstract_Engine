@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.myGame.engine.AudioManagement.AudioManager;
 import com.myGame.engine.EntityManagement.EntityManager;
 import com.myGame.engine.InputManagement.InputManager;
-import com.myGame.engine.InputManagement.Interfaces.InputState;
+import com.myGame.engine.InputManagement.InputState;
 import com.myGame.engine.SceneManagement.abstractScenes.StaticScene;
 import com.myGame.simulation.input.MouseClickInputSource;
 import com.myGame.simulation.input.PauseInputSource;

@@ -4,7 +4,7 @@ import com.myGame.engine.Animation.AnimationManager;
 import com.myGame.engine.Collision.CollisionManager;
 import com.myGame.engine.Collision.LifecycleManager;
 import com.myGame.engine.EntityManagement.EntityManager;
-import com.myGame.engine.Movement.MovementManager;
+import com.myGame.engine.MovementManagement.MovementManager;
 
 import java.util.Objects;
 

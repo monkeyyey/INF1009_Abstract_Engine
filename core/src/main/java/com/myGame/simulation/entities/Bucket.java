@@ -1,7 +1,7 @@
 package com.myGame.simulation.entities;
 
 import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
-import com.myGame.engine.InputManagement.Interfaces.InputState;
+import com.myGame.engine.InputManagement.InputState;
 
 public class Bucket extends MovableTextureObject {
     private final float speed;

@@ -17,15 +17,17 @@ import com.myGame.engine.Collision.CollisionManager;
 import com.myGame.engine.Collision.LifecycleManager;
 import com.myGame.engine.EntityManagement.EntityManager;
 import com.myGame.engine.InputManagement.InputManager;
+import com.myGame.engine.InputManagement.InputState;
 import com.myGame.engine.InputManagement.Interfaces.InputSource;
-import com.myGame.engine.InputManagement.Interfaces.InputState;
-import com.myGame.engine.Movement.MovementManager;
+import com.myGame.engine.MovementManagement.MovementManager;
 import com.myGame.engine.SceneManagement.abstractScenes.ActionScene;
 import com.myGame.simulation.input.KeyboardArrowInputSource;
 import com.myGame.simulation.input.KeyboardWASDInputSource;
+import com.myGame.simulation.input.MouseInputSource;
 import com.myGame.simulation.mathbomber.question.ArithmeticQuestionGenerator;
 import com.myGame.simulation.mathbomber.config.ControlScheme;
 import com.myGame.simulation.mathbomber.round.ExplosionOutcome;
+import com.myGame.simulation.mathbomber.animation.MathBomberAnimationFactory;
 import com.myGame.simulation.mathbomber.board.MathBoard;
 import com.myGame.simulation.mathbomber.config.MathBomberConfig;
 import com.myGame.simulation.mathbomber.factory.MathBomberFactory;
@@ -48,8 +50,10 @@ public class GameScene extends ActionScene {
     private final ControlScheme controlScheme;
     private final QuestionMode questionMode;
     private final Consumer<MathBomberGameStats> onGameWon;
+    private final Consumer<MathBomberGameStats> onGameLost;
     private final ArithmeticQuestionGenerator questionGenerator;
     private final MathBomberFactory factory;
+    private final MathBomberAnimationFactory animationFactory;
 
     private final MathRoundEntities roundEntities;
     private final ExplosionOutcome explosionOutcome = new ExplosionOutcome();
@@ -67,6 +71,7 @@ public class GameScene extends ActionScene {
     private boolean initialized;
     private boolean penaltyProcessedThisFrame;
     private boolean winTransitionTriggered;
+    private boolean loseTransitionTriggered;
     private float elapsedGameSeconds;
     private Runnable pendingTransition;
     private float pendingTransitionDelay;
@@ -81,8 +86,9 @@ public class GameScene extends ActionScene {
                            MathBomberConfig config,
                            ControlScheme controlScheme,
                            QuestionMode questionMode,
-                           Consumer<MathBomberGameStats> onGameWon) {
-        this(inputManager, audioManager, entityManager, collisionManager, movementManager, lifecycleManager, animationManager, config, controlScheme, questionMode, onGameWon,
+                           Consumer<MathBomberGameStats> onGameWon,
+                           Consumer<MathBomberGameStats> onGameLost) {
+        this(inputManager, audioManager, entityManager, collisionManager, movementManager, lifecycleManager, animationManager, config, controlScheme, questionMode, onGameWon, onGameLost,
                 MathBomberFactoryProducer.getFactory(config, questionMode));
     }
 
@@ -97,6 +103,7 @@ public class GameScene extends ActionScene {
                            ControlScheme controlScheme,
                            QuestionMode questionMode,
                            Consumer<MathBomberGameStats> onGameWon,
+                           Consumer<MathBomberGameStats> onGameLost,
                            MathBomberFactory factory) {
         super(entityManager, collisionManager, movementManager, lifecycleManager, animationManager);
         this.inputManager = inputManager;
@@ -105,22 +112,20 @@ public class GameScene extends ActionScene {
         this.controlScheme = controlScheme;
         this.questionMode = questionMode == null ? QuestionMode.BOTH : questionMode;
         this.onGameWon = onGameWon;
+        this.onGameLost = onGameLost;
         this.factory = factory;
+        this.animationFactory = new MathBomberAnimationFactory();
         this.questionGenerator = factory.createQuestionGenerator();
         this.roundEntities = new MathRoundEntities(entityManager);
-        this.roundState = new MathRoundState(config.winScore, config.bombsPerQuestion, config.questionTimeSeconds);
+        this.roundState = new MathRoundState(
+                config.winScore,
+                config.bombsPerQuestion,
+                config.questionTimeSeconds,
+                config.startingLives);
     }
 
     @Override
     public void onEnter() {
-        InputSource inputSource = controlScheme == ControlScheme.WASD
-                ? new KeyboardWASDInputSource()
-                : new KeyboardArrowInputSource();
-
-        inputManager.addInputSource(
-                INPUT_ID,
-                inputSource);
-
         if (!initialized) {
             initialized = true;
             hudFont = GameFontFactory.regular(22);
@@ -129,11 +134,25 @@ public class GameScene extends ActionScene {
             enemyValueFont = GameFontFactory.regular(18);
             hudLayout = new GlyphLayout();
             board = factory.createBoard(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            player = factory.createPlayer(board);
+            player = factory.createPlayer(board, animationFactory.createPlayerAnimationComponent());
             player.setOccupancyChecker(this::canOccupyPlayer);
             player.setExplosionHitHandler(explosionOutcome::markPlayerHit);
             entityManager.addEntity("math_player", player);
         }
+        InputSource inputSource;
+        switch (controlScheme) {
+            case WASD:
+                inputSource = new KeyboardWASDInputSource();
+                break;
+            case MOUSE:
+                inputSource = new MouseInputSource(player);
+                break;
+            case ARROW_KEYS:
+            default:
+                inputSource = new KeyboardArrowInputSource();
+                break;
+        }
+        inputManager.addInputSource(INPUT_ID, inputSource);
 
         audioManager.playMusic("calm");
         resetWholeGame();
@@ -214,7 +233,7 @@ public class GameScene extends ActionScene {
         if (!explosionOutcome.isExplosionTriggered()) return;
 
         if (explosionOutcome.isPlayerHit()) {
-            applyPenaltyAndRefresh("You hit yourself. New question.");
+            applyLifePenaltyAndMaybeRefresh("You hit yourself. New question.");
             return;
         }
         if (explosionOutcome.isCorrectEnemyHit()) {
@@ -269,12 +288,16 @@ public class GameScene extends ActionScene {
         float qx = (Gdx.graphics.getWidth() - hudLayout.width) * 0.5f;
         hudFont.draw(batch, hudLayout, qx, topY - lineGap);
 
-        String statsLine = "Score: " + roundState.getScore() + " / " + config.winScore + "   Time: " + Math.max(0, (int) Math.ceil(roundState.getQuestionTimeLeft())) + "s" + "   Bombs Left: " + roundState.getBombsRemaining() + "   Total Elapsed: " + formatElapsedTime(elapsedGameSeconds);
+        String statsLine = "Score: " + roundState.getScore() + " / " + config.winScore
+                + "   Lives: " + roundState.getLivesRemaining()
+                + "   Time: " + Math.max(0, (int) Math.ceil(roundState.getQuestionTimeLeft())) + "s"
+                + "   Bombs Left: " + roundState.getBombsRemaining()
+                + "   Total Elapsed: " + formatElapsedTime(elapsedGameSeconds);
         hudLayout.setText(statsFont, statsLine);
         float sx = (Gdx.graphics.getWidth() - hudLayout.width) * 0.5f;
         statsFont.draw(batch, hudLayout, sx, topY - lineGap * 2f);
 
-        String controlsLine = "Move: " + moveHint() + "   Bomb: SPACE   Reset: R";
+        String controlsLine = "Move: " + moveHint() + "   Bomb: " + bombHint() + "   Reset: R";
         hudLayout.setText(hudFont, controlsLine);
         float cx = (Gdx.graphics.getWidth() - hudLayout.width) * 0.5f;
         hudFont.draw(batch, hudLayout, cx, topY - lineGap * 3f);
@@ -320,11 +343,13 @@ public class GameScene extends ActionScene {
         if (enemyValueFont != null) {
             enemyValueFont.dispose();
         }
+        animationFactory.dispose();
     }
 
     private void resetWholeGame() {
         roundState.resetWholeGame();
         winTransitionTriggered = false;
+        loseTransitionTriggered = false;
         elapsedGameSeconds = 0f;
         pendingTransition = null;
         pendingTransitionDelay = 0f;
@@ -356,7 +381,7 @@ public class GameScene extends ActionScene {
             MathEnemy enemy = factory.createEnemy(board, row, col, value);
             enemy.setPlayerCollisionHandler(() -> {
                 playSoundSafely("beep");
-                applyPenaltyAndRefresh("Enemy touched you. New question.");
+                applyLifePenaltyAndMaybeRefresh("Enemy touched you. New question.");
             });
             enemy.setExplosionHitHandler(e -> {
                 if (e.getValue() == currentQuestion.getAnswer()) {
@@ -435,13 +460,32 @@ public class GameScene extends ActionScene {
         if (roundEntities.hasBombAt(bombRow, bombCol)) return;
 
         roundState.consumeBomb();
-        MathBomb bomb = factory.createBomb(board, bombRow, bombCol, config.bombFuseSeconds, config.bombBlastRange);
+        MathBomb bomb = factory.createBomb(
+                board,
+                bombRow,
+                bombCol,
+                config.bombFuseSeconds,
+                config.bombBlastRange,
+                animationFactory.createBombAnimationComponent());
         roundEntities.addBomb("math_bomb_" + System.nanoTime(), bomb);
     }
 
     private void applyPenaltyAndRefresh(String message) {
         if (penaltyProcessedThisFrame) return;
         penaltyProcessedThisFrame = true;
+        startQuestionRound(message, 1.8f, true);
+    }
+
+    private void applyLifePenaltyAndMaybeRefresh(String message) {
+        if (penaltyProcessedThisFrame) return;
+        penaltyProcessedThisFrame = true;
+        boolean stillAlive = roundState.consumeLife();
+        if (!stillAlive) {
+            roundState.setFeedback("Out of lives.", 0f);
+            clearRoundEntities();
+            scheduleTransition(this::dispatchLoseTransition);
+            return;
+        }
         startQuestionRound(message, 1.8f, true);
     }
 
@@ -472,7 +516,19 @@ public class GameScene extends ActionScene {
     }
 
     private String moveHint() {
-        return controlScheme == ControlScheme.WASD ? "WASD" : "Arrow Keys";
+        switch (controlScheme) {
+            case WASD:
+                return "WASD";
+            case MOUSE:
+                return "Mouse";
+            case ARROW_KEYS:
+            default:
+                return "Arrow Keys";
+        }
+    }
+
+    private String bombHint() {
+        return controlScheme == ControlScheme.MOUSE ? "Left Click" : "SPACE";
     }
 
     private String modeTitle() {
@@ -506,6 +562,14 @@ public class GameScene extends ActionScene {
         }
         winTransitionTriggered = true;
         onGameWon.accept(buildCurrentStats());
+    }
+
+    private void dispatchLoseTransition() {
+        if (onGameLost == null || loseTransitionTriggered) {
+            return;
+        }
+        loseTransitionTriggered = true;
+        onGameLost.accept(buildCurrentStats());
     }
 
     public MathBomberGameStats buildCurrentStats() {

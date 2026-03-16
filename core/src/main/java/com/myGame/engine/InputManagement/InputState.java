@@ -1,4 +1,4 @@
-package com.myGame.engine.InputManagement.Interfaces;
+package com.myGame.engine.InputManagement;
 
 public class InputState {
     private boolean up, down, left, right;

@@ -1,5 +1,6 @@
 package com.myGame.engine.Animation;
 
+import com.myGame.engine.Animation.Interfaces.iAnimatable;
 import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
 
 import java.util.Collection;

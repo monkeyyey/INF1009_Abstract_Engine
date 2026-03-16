@@ -1,9 +1,12 @@
 package com.myGame.simulation.mathbomber.factory;
 
+import com.myGame.engine.Animation.AnimationComponent;
 import com.myGame.simulation.entities.ExplosionCell;
 import com.myGame.simulation.entities.MathBomb;
 import com.myGame.simulation.entities.MathEnemy;
 import com.myGame.simulation.entities.MathPlayer;
+import com.myGame.simulation.mathbomber.animation.MathBombAnimationState;
+import com.myGame.simulation.mathbomber.animation.MathPlayerAnimationState;
 import com.myGame.simulation.mathbomber.board.MathBoard;
 import com.myGame.simulation.mathbomber.config.MathBomberConfig;
 
@@ -26,7 +29,7 @@ public abstract class BaseMathBomberFactory implements MathBomberFactory {
     }
 
     @Override
-    public MathPlayer createPlayer(MathBoard board) {
+    public MathPlayer createPlayer(MathBoard board, AnimationComponent<MathPlayerAnimationState> animation) {
         return new MathPlayer(
                 config.playerSpawnRow,
                 config.playerSpawnCol,
@@ -34,7 +37,8 @@ public abstract class BaseMathBomberFactory implements MathBomberFactory {
                 board.getBoardX(),
                 board.getBoardY(),
                 config.playerSpeedUnitsPerSec,
-                config.playerColor);
+                config.playerColor,
+                animation);
     }
 
     @Override
@@ -44,8 +48,13 @@ public abstract class BaseMathBomberFactory implements MathBomberFactory {
     }
 
     @Override
-    public MathBomb createBomb(MathBoard board, int row, int col, float fuseSeconds, int blastRange) {
-        BombSpawnRequest request = new BombSpawnRequest(board, row, col, fuseSeconds, blastRange);
+    public MathBomb createBomb(MathBoard board,
+                               int row,
+                               int col,
+                               float fuseSeconds,
+                               int blastRange,
+                               AnimationComponent<MathBombAnimationState> animation) {
+        BombSpawnRequest request = new BombSpawnRequest(board, row, col, fuseSeconds, blastRange, animation);
         return spawnFactoryRegistry.createEntity(MathBomb.class, request);
     }
 
@@ -70,7 +79,8 @@ public abstract class BaseMathBomberFactory implements MathBomberFactory {
                 req.board.getBoardX(),
                 req.board.getBoardY(),
                 req.fuseSeconds,
-                req.blastRange));
+                req.blastRange,
+                req.animation));
         spawnFactoryRegistry.registerFactory(ExplosionCell.class, (ExplosionSpawnRequest req) -> new ExplosionCell(
                 req.row,
                 req.col,
@@ -100,13 +110,20 @@ public abstract class BaseMathBomberFactory implements MathBomberFactory {
         private final int col;
         private final float fuseSeconds;
         private final int blastRange;
+        private final AnimationComponent<MathBombAnimationState> animation;
 
-        private BombSpawnRequest(MathBoard board, int row, int col, float fuseSeconds, int blastRange) {
+        private BombSpawnRequest(MathBoard board,
+                                 int row,
+                                 int col,
+                                 float fuseSeconds,
+                                 int blastRange,
+                                 AnimationComponent<MathBombAnimationState> animation) {
             this.board = board;
             this.row = row;
             this.col = col;
             this.fuseSeconds = fuseSeconds;
             this.blastRange = blastRange;
+            this.animation = animation;
         }
     }
 

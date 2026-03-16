@@ -12,7 +12,7 @@ import com.myGame.engine.Collision.CollisionManager;
 import com.myGame.engine.Collision.LifecycleManager;
 import com.myGame.engine.EntityManagement.EntityManager;
 import com.myGame.engine.InputManagement.InputManager;
-import com.myGame.engine.Movement.MovementManager;
+import com.myGame.engine.MovementManagement.MovementManager;
 import com.myGame.engine.SceneManagement.SceneManager;
 import com.myGame.engine.SceneManagement.abstractScenes.Scene;
 import com.myGame.simulation.input.PauseInputSource;
@@ -117,12 +117,17 @@ public class GameEngine extends ApplicationAdapter {
                 config,
                 controls,
                 questionMode,
-                this::showWinningEndScene);
+                this::showWinningEndScene,
+                this::showLosingEndScene);
         sceneManager.setScene(mathBomberScene);
     }
 
     private void showWinningEndScene(MathBomberGameStats stats) {
         showEndScene(stats, true);
+    }
+
+    private void showLosingEndScene(MathBomberGameStats stats) {
+        showEndScene(stats, false);
     }
 
     private void handlePauseQuit() {

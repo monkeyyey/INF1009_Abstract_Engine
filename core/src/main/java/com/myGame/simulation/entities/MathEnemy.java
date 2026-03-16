@@ -6,7 +6,7 @@ import com.myGame.engine.Collision.Hitboxes.CircleHitbox;
 import com.myGame.engine.Collision.Hitboxes.Hitbox;
 import com.myGame.engine.Collision.Interfaces.iCollidable;
 import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
-import com.myGame.engine.Movement.Interfaces.iMovable;
+import com.myGame.engine.MovementManagement.Interfaces.iMovable;
 import com.myGame.simulation.interfaces.ExplosionTarget;
 
 import java.util.Objects;

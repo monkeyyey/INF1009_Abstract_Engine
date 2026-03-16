@@ -1,23 +1,19 @@
 package com.myGame.simulation.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.Color;
-import com.myGame.engine.Animation.iAnimatable;
+import com.myGame.engine.Animation.AnimationComponent;
+import com.myGame.engine.Animation.Interfaces.iAnimatable;
 import com.myGame.engine.Collision.Hitboxes.CircleHitbox;
 import com.myGame.engine.Collision.Hitboxes.Hitbox;
 import com.myGame.engine.Collision.Interfaces.iCollidable;
 import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
-import com.myGame.engine.InputManagement.Interfaces.InputState;
-import com.myGame.engine.Movement.Interfaces.iMovable;
-import com.myGame.simulation.animation.AnimationComponent;
+import com.myGame.engine.InputManagement.InputState;
+import com.myGame.engine.MovementManagement.Interfaces.iMovable;
 import com.myGame.simulation.interfaces.ExplosionTarget;
+import com.myGame.simulation.mathbomber.animation.MathPlayerAnimationState;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class MathPlayer extends Entity implements iMovable, iCollidable, ExplosionTarget, iAnimatable {
@@ -31,29 +27,22 @@ public class MathPlayer extends Entity implements iMovable, iCollidable, Explosi
     private final float boardX;
     private final float boardY;
     private final float speed;
-    private final Color color;
 
     private float velocityX;
     private float velocityY;
     private Hitbox hitbox;
     private OccupancyChecker occupancyChecker;
     private Runnable explosionHitHandler;
+    private final AnimationComponent<MathPlayerAnimationState> animation;
 
-    private Texture runUpTexture;
-    private Texture runDownTexture;
-    private Texture runHorizontalTexture;
-    private Texture idleFrontTexture;
-    private final AnimationComponent<PlayerAnimationState> animation;
-
-    private enum PlayerAnimationState {
-        IDLE_DOWN,
-        RUN_UP,
-        RUN_DOWN,
-        RUN_LEFT,
-        RUN_RIGHT
-    }
-
-    public MathPlayer(int row, int col, float tileSize, float boardX, float boardY, float speed, Color color) {
+    public MathPlayer(int row,
+                      int col,
+                      float tileSize,
+                      float boardX,
+                      float boardY,
+                      float speed,
+                      Color color,
+                      AnimationComponent<MathPlayerAnimationState> animation) {
         super(boardX + (col + 0.5f) * tileSize, boardY + (row + 0.5f) * tileSize);
         this.row = row;
         this.col = col;
@@ -61,9 +50,9 @@ public class MathPlayer extends Entity implements iMovable, iCollidable, Explosi
         this.boardX = boardX;
         this.boardY = boardY;
         this.speed = speed;
-        this.color = color;
+        Objects.requireNonNull(color, "Player color cannot be null");
+        this.animation = Objects.requireNonNull(animation, "Animation component cannot be null");
         this.hitbox = new CircleHitbox(getRadius());
-        this.animation = initAnimationComponent();
     }
 
     public int getRow() {
@@ -102,7 +91,7 @@ public class MathPlayer extends Entity implements iMovable, iCollidable, Explosi
         if (dx == 0f && dy == 0f) {
             velocityX = 0f;
             velocityY = 0f;
-            animation.setState(PlayerAnimationState.IDLE_DOWN, false);
+            animation.setState(MathPlayerAnimationState.IDLE_DOWN, false);
             return;
         }
 
@@ -169,10 +158,7 @@ public class MathPlayer extends Entity implements iMovable, iCollidable, Explosi
 
     @Override
     public void dispose() {
-        if (runUpTexture != null) runUpTexture.dispose();
-        if (runDownTexture != null) runDownTexture.dispose();
-        if (runHorizontalTexture != null) runHorizontalTexture.dispose();
-        if (idleFrontTexture != null) idleFrontTexture.dispose();
+        // No owned resources.
     }
 
     @Override
@@ -202,48 +188,14 @@ public class MathPlayer extends Entity implements iMovable, iCollidable, Explosi
     private void updateFacingAndAnimation(float dx, float dy) {
         if (Math.abs(dx) >= Math.abs(dy)) {
             if (dx > 0f) {
-                animation.setState(PlayerAnimationState.RUN_RIGHT);
+                animation.setState(MathPlayerAnimationState.RUN_RIGHT);
             } else {
-                animation.setState(PlayerAnimationState.RUN_LEFT);
+                animation.setState(MathPlayerAnimationState.RUN_LEFT);
             }
         } else if (dy > 0f) {
-            animation.setState(PlayerAnimationState.RUN_UP);
+            animation.setState(MathPlayerAnimationState.RUN_UP);
         } else {
-            animation.setState(PlayerAnimationState.RUN_DOWN);
+            animation.setState(MathPlayerAnimationState.RUN_DOWN);
         }
-    }
-
-    private AnimationComponent<PlayerAnimationState> initAnimationComponent() {
-        runUpTexture = new Texture(Gdx.files.internal("animations/run_up.png"));
-        runDownTexture = new Texture(Gdx.files.internal("animations/run_down.png"));
-        runHorizontalTexture = new Texture(Gdx.files.internal("animations/run_horizontal.png"));
-        idleFrontTexture = new Texture(Gdx.files.internal("animations/idle_front.png"));
-
-        Map<PlayerAnimationState, Animation<TextureRegion>> clips = new EnumMap<>(PlayerAnimationState.class);
-        clips.put(PlayerAnimationState.RUN_UP, toAnimationFromGrid(runUpTexture, 3, 3, 0, 0.11f, false));
-        clips.put(PlayerAnimationState.RUN_DOWN, toAnimationFromGrid(runDownTexture, 3, 3, 0, 0.11f, false));
-        clips.put(PlayerAnimationState.RUN_RIGHT, toAnimationFromGrid(runHorizontalTexture, 3, 3, 0, 0.11f, false));
-        clips.put(PlayerAnimationState.RUN_LEFT, toAnimationFromGrid(runHorizontalTexture, 3, 3, 0, 0.11f, true));
-        clips.put(PlayerAnimationState.IDLE_DOWN, toAnimationFromGrid(idleFrontTexture, 3, 2, 0, 0.18f, false));
-        return new AnimationComponent<>(PlayerAnimationState.class, clips, PlayerAnimationState.IDLE_DOWN);
-    }
-
-    private Animation<TextureRegion> toAnimationFromGrid(Texture texture,
-                                                         int cols,
-                                                         int rows,
-                                                         int rowIndex,
-                                                         float frameDuration,
-                                                         boolean flipX) {
-        int frameWidth = Math.max(1, texture.getWidth() / Math.max(1, cols));
-        int frameHeight = Math.max(1, texture.getHeight() / Math.max(1, rows));
-        TextureRegion[][] split = TextureRegion.split(texture, frameWidth, frameHeight);
-        int selectedRow = Math.max(0, Math.min(rowIndex, split.length - 1));
-        TextureRegion[] frames = new TextureRegion[split[selectedRow].length];
-        for (int i = 0; i < split[selectedRow].length; i++) {
-            TextureRegion region = new TextureRegion(split[selectedRow][i]);
-            if (flipX) region.flip(true, false);
-            frames[i] = region;
-        }
-        return new Animation<>(frameDuration, frames);
     }
 }

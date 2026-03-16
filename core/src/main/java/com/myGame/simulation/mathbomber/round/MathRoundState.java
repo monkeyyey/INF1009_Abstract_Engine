@@ -4,22 +4,26 @@ public class MathRoundState {
     private final int winScore;
     private final int bombsPerQuestion;
     private final float questionTimeSeconds;
+    private final int maxLives;
 
     private int score;
     private int bombsRemaining;
+    private int livesRemaining;
     private float questionTimeLeft;
     private String feedbackText = "";
     private float feedbackTimer;
     private boolean gameWon;
 
-    public MathRoundState(int winScore, int bombsPerQuestion, float questionTimeSeconds) {
+    public MathRoundState(int winScore, int bombsPerQuestion, float questionTimeSeconds, int maxLives) {
         this.winScore = winScore;
         this.bombsPerQuestion = bombsPerQuestion;
         this.questionTimeSeconds = questionTimeSeconds;
+        this.maxLives = maxLives;
     }
 
     public void resetWholeGame() {
         score = 0;
+        livesRemaining = maxLives;
         gameWon = false;
         feedbackText = "";
         feedbackTimer = 0f;
@@ -61,12 +65,24 @@ public class MathRoundState {
         return gameWon;
     }
 
+    public boolean consumeLife() {
+        if (livesRemaining <= 0) {
+            return false;
+        }
+        livesRemaining--;
+        return livesRemaining > 0;
+    }
+
     public int getScore() {
         return score;
     }
 
     public int getBombsRemaining() {
         return bombsRemaining;
+    }
+
+    public int getLivesRemaining() {
+        return livesRemaining;
     }
 
     public float getQuestionTimeLeft() {

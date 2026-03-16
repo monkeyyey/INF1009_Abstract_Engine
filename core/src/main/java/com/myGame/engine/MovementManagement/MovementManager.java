@@ -1,7 +1,7 @@
-package com.myGame.engine.Movement;
+package com.myGame.engine.MovementManagement;
 
 import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
-import com.myGame.engine.Movement.Interfaces.iMovable;
+import com.myGame.engine.MovementManagement.Interfaces.iMovable;
 
 import java.util.Collection;
 

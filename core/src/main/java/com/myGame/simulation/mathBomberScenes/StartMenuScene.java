@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.myGame.engine.AudioManagement.AudioManager;
 import com.myGame.engine.EntityManagement.EntityManager;
 import com.myGame.engine.InputManagement.InputManager;
-import com.myGame.engine.InputManagement.Interfaces.InputState;
+import com.myGame.engine.InputManagement.InputState;
 import com.myGame.engine.SceneManagement.abstractScenes.StaticScene;
 import com.myGame.simulation.input.KeyboardCustomInputSource;
 import com.myGame.simulation.input.MouseClickInputSource;
@@ -204,9 +204,9 @@ public class StartMenuScene extends StaticScene {
                 () -> selectedDifficulty = Difficulty.HARD,
                 () -> selectedDifficulty == Difficulty.HARD);
 
-        float controlW = Math.min(260f, w * 0.3f);
-        float controlGap = 30f;
-        float controlStartX = (w - (controlW * 2f + controlGap)) / 2f;
+        float controlW = buttonW;
+        float controlGap = gap;
+        float controlStartX = leftX;
         registerToggleButton(
                 "Arrow Keys", controlStartX, row2Y, controlW, buttonH,
                 () -> selectedControls = ControlScheme.ARROW_KEYS,
@@ -215,6 +215,10 @@ public class StartMenuScene extends StaticScene {
                 "WASD", controlStartX + controlW + controlGap, row2Y, controlW, buttonH,
                 () -> selectedControls = ControlScheme.WASD,
                 () -> selectedControls == ControlScheme.WASD);
+        registerToggleButton(
+                "Mouse", controlStartX + (controlW + controlGap) * 2f, row2Y, controlW, buttonH,
+                () -> selectedControls = ControlScheme.MOUSE,
+                () -> selectedControls == ControlScheme.MOUSE);
 
         registerToggleButton(
                 "Addition", leftX, row3Y, buttonW, buttonH,

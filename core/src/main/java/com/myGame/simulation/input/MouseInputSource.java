@@ -3,8 +3,8 @@ package com.myGame.simulation.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
+import com.myGame.engine.InputManagement.InputState;
 import com.myGame.engine.InputManagement.Interfaces.InputSource;
-import com.myGame.engine.InputManagement.Interfaces.InputState;
 
 public class MouseInputSource implements InputSource {
     private static final float DEFAULT_DEADZONE = 10f;
@@ -35,7 +35,8 @@ public class MouseInputSource implements InputSource {
         state.setDown(moveVertically && dy < 0f);
         state.setUp(moveVertically && dy > 0f);
         state.setAction1(Gdx.input.isButtonPressed(Input.Buttons.LEFT));
-        state.setAction2(Gdx.input.isButtonPressed(Input.Buttons.RIGHT));
+        state.setAction2(Gdx.input.isKeyPressed(Input.Keys.R));
+        state.setQuit(Gdx.input.isKeyPressed(Input.Keys.Q));
         state.setPause(false);
     }
 }

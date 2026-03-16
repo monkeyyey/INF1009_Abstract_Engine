@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.myGame.engine.InputManagement.Interfaces.InputSource;
-import com.myGame.engine.InputManagement.Interfaces.InputState;
 
 public class InputManager {
     private final Map<Integer, InputSource> inputSources = new HashMap<>();

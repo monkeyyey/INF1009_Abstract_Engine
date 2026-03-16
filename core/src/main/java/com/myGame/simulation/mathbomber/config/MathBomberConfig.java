@@ -41,6 +41,7 @@ public class MathBomberConfig {
     public final int multiplicationMaxOperand;
     public final float questionTimeSeconds;
     public final int bombsPerQuestion;
+    public final int startingLives;
 
     public final float playerSpeedUnitsPerSec;
     public final float enemyMoveDurationSeconds;
@@ -67,6 +68,7 @@ public class MathBomberConfig {
                             int multiplicationMaxOperand,
                             float questionTimeSeconds,
                             int bombsPerQuestion,
+                            int startingLives,
                             float playerSpeedUnitsPerSec,
                             float enemyMoveDurationSeconds,
                             float bombFuseSeconds,
@@ -87,6 +89,7 @@ public class MathBomberConfig {
         this.multiplicationMaxOperand = multiplicationMaxOperand;
         this.questionTimeSeconds = questionTimeSeconds;
         this.bombsPerQuestion = bombsPerQuestion;
+        this.startingLives = startingLives;
         this.playerSpeedUnitsPerSec = playerSpeedUnitsPerSec;
         this.enemyMoveDurationSeconds = enemyMoveDurationSeconds;
         this.bombFuseSeconds = bombFuseSeconds;
@@ -105,7 +108,7 @@ public class MathBomberConfig {
                 3, 3,
                 1, 5,
                 1, 5,
-                60f, 5,
+                60f, 5, 3,
                 tile / 0.36f,
                 0.60f,
                 1.8f,
@@ -122,9 +125,9 @@ public class MathBomberConfig {
         return new MathBomberConfig(
                 11, 13, tile,
                 4, 4,
-                5, 10,
                 6, 10,
-                45f, 4,
+                6, 10,
+                45f, 4, 3,
                 tile / 0.36f,
                 0.48f,
                 1.8f,
@@ -143,7 +146,7 @@ public class MathBomberConfig {
                 5, 6,
                 20, 50,
                 11, 20,
-                30f, 3,
+                30f, 3, 3,
                 tile / 0.36f,
                 0.36f,
                 1.8f,

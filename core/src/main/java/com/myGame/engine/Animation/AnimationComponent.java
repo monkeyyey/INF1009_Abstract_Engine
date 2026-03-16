@@ -1,4 +1,4 @@
-    package com.myGame.simulation.animation;
+package com.myGame.engine.Animation;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -50,10 +50,6 @@ public class AnimationComponent<S extends Enum<S>> {
         }
     }
 
-    public S getState() {
-        return state;
-    }
-
     public void update(float dt) {
         stateTime += Math.max(0f, dt);
     }
@@ -63,16 +59,7 @@ public class AnimationComponent<S extends Enum<S>> {
         return animation.getKeyFrame(stateTime, isLooping(state));
     }
 
-    public boolean isCurrentAnimationFinished() {
-        Animation<TextureRegion> animation = clips.get(state);
-        return animation.isAnimationFinished(stateTime);
-    }
-
-    public void resetTime() {
-        stateTime = 0f;
-    }
-
-    private boolean isLooping(S state) {
-        return loopByState.getOrDefault(state, true);
+    private boolean isLooping(S currentState) {
+        return loopByState.getOrDefault(currentState, true);
     }
 }
