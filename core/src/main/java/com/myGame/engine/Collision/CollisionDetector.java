@@ -1,6 +1,6 @@
-package com.myGame.engine.Collision;
+package com.myGame.engine.collision;
 
-import com.myGame.engine.Collision.Hitboxes.Hitbox;
+import com.myGame.engine.collision.Hitboxes.Hitbox;
 
 public final class CollisionDetector {
     

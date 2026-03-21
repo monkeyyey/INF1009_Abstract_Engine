@@ -1,7 +1,6 @@
-package com.myGame.engine.Collision;
+package com.myGame.engine.collision;
 
-import com.myGame.engine.Collision.Interfaces.iCollidable;
-import com.myGame.engine.EntityManagement.AbstractEntities.Entity;
+import com.myGame.engine.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.Collection;

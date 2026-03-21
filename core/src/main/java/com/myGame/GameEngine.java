@@ -2,28 +2,29 @@ package com.myGame;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.myGame.engine.Animation.AnimationManager;
-import com.myGame.engine.AudioManagement.AudioManager;
-import com.myGame.engine.Collision.CollisionManager;
-import com.myGame.engine.Collision.LifecycleManager;
-import com.myGame.engine.EntityManagement.EntityManager;
-import com.myGame.engine.InputManagement.InputManager;
-import com.myGame.engine.MovementManagement.MovementManager;
-import com.myGame.engine.SceneManagement.SceneManager;
-import com.myGame.engine.SceneManagement.abstractScenes.Scene;
-import com.myGame.simulation.input.PauseInputSource;
-import com.myGame.simulation.mathBomberScenes.GameScene;
-import com.myGame.simulation.mathBomberScenes.StartMenuScene;
-import com.myGame.simulation.mathBomberScenes.EndScene;
-import com.myGame.simulation.mathBomberScenes.PauseScene;
-import com.myGame.simulation.mathbomber.config.ControlScheme;
-import com.myGame.simulation.mathbomber.config.MathBomberConfig;
-import com.myGame.simulation.mathbomber.config.MathBomberGameStats;
-import com.myGame.simulation.mathbomber.config.QuestionMode;
+import com.myGame.engine.animation.AnimationManager;
+import com.myGame.engine.audio.AudioManager;
+import com.myGame.engine.collision.CollisionManager;
+import com.myGame.engine.lifecycle.LifecycleManager;
+import com.myGame.engine.entity.EntityManager;
+import com.myGame.engine.input.InputManager;
+import com.myGame.engine.movement.MovementManager;
+import com.myGame.engine.scene.SceneManager;
+import com.myGame.engine.scene.Scene;
+import com.myGame.game.factory.MathBomberFactory;
+import com.myGame.game.factory.MathBomberFactoryProducer;
+import com.myGame.game.input.keyboard.PauseInputSource;
+import com.myGame.game.mathbomber.configurations.MathBomberConfig;
+import com.myGame.game.mathbomber.configurations.MathBomberGameStats;
+import com.myGame.game.mathbomber.configurations.enums.ControlScheme;
+import com.myGame.game.mathbomber.configurations.enums.QuestionMode;
+import com.myGame.game.scenes.gameplay.GameScene;
+import com.myGame.game.scenes.menu.EndScene;
+import com.myGame.game.scenes.menu.PauseScene;
+import com.myGame.game.scenes.menu.StartMenuScene;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class GameEngine extends ApplicationAdapter {
@@ -55,8 +56,7 @@ public class GameEngine extends ApplicationAdapter {
         loadSoundWithFallback("failure", "SFX/failure.wav", "SFX/water_droplet.wav");
         audioManager.loadMusic("calm", "backgroundMusic/calm_background_music.mp3");
         audioManager.loadMusic("intense", "backgroundMusic/intense_background_music.mp3");
-        audioManager.setMusicTrackVolume("calm", 0.55f);
-        audioManager.setMusicTrackVolume("intense", 0.35f);
+        audioManager.setMusicVolume(0.35f);
 
         pauseScene = new PauseScene(
                 inputManager,
@@ -97,7 +97,7 @@ public class GameEngine extends ApplicationAdapter {
         boolean paused = activeScene instanceof PauseScene;
         boolean inGame = activeScene instanceof GameScene;
         boolean pausePressed = inputManager.getState(GLOBAL_PAUSE_INPUT_ID) != null
-                && inputManager.getState(GLOBAL_PAUSE_INPUT_ID).isAction1JustPressed();
+                && inputManager.getState(GLOBAL_PAUSE_INPUT_ID).isPause();
 
         if (inGame && !paused && pausePressed) {
             sceneManager.pushScene(pauseScene);
@@ -106,6 +106,7 @@ public class GameEngine extends ApplicationAdapter {
     }
 
     private void startMathBomberGame(MathBomberConfig config, ControlScheme controls, QuestionMode questionMode) {
+        MathBomberFactory factory = MathBomberFactoryProducer.getFactory(config, questionMode);
         mathBomberScene = new GameScene(
                 inputManager,
                 audioManager,
@@ -118,7 +119,8 @@ public class GameEngine extends ApplicationAdapter {
                 controls,
                 questionMode,
                 this::showWinningEndScene,
-                this::showLosingEndScene);
+                this::showLosingEndScene,
+                factory);
         sceneManager.setScene(mathBomberScene);
     }
 

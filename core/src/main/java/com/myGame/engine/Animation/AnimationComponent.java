@@ -1,4 +1,4 @@
-package com.myGame.engine.Animation;
+package com.myGame.engine.animation;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

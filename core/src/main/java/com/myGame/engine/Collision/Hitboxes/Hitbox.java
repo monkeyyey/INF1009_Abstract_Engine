@@ -1,4 +1,4 @@
-package com.myGame.engine.Collision.Hitboxes;
+package com.myGame.engine.collision.Hitboxes;
 
 public abstract class Hitbox {
     public abstract boolean overlaps(float x, float y, Hitbox other, float otherX, float otherY);
