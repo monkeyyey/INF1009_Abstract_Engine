@@ -2,7 +2,7 @@ package com.myGame.game.entities;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.myGame.engine.collision.iCollidable;
-import com.myGame.engine.collision.Hitboxes.Hitbox;
+import com.myGame.engine.collision.hitboxes.Hitbox;
 import com.myGame.engine.entity.Entity;
 import com.myGame.engine.movement.iMovable;
 

@@ -2,7 +2,7 @@ package com.myGame.game.entities;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.myGame.engine.collision.Hitboxes.RectHitbox;
+import com.myGame.engine.collision.hitboxes.RectHitbox;
 
 public class SquareMathEnemy extends MathEnemy {
     public SquareMathEnemy(int row, int col, int value, float tileSize, float boardX, float boardY) {

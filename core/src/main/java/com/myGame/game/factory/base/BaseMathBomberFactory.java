@@ -87,11 +87,11 @@ public abstract class BaseMathBomberFactory implements MathBomberFactory {
         private final AnimationComponent<MathBombAnimationState> animation;
 
         private BombSpawnRequest(Board board,
-                                 int row,
-                                 int col,
-                                 float fuseSeconds,
-                                 int blastRange,
-                                 AnimationComponent<MathBombAnimationState> animation) {
+                                int row,
+                                int col,
+                                float fuseSeconds,
+                                int blastRange,
+                                AnimationComponent<MathBombAnimationState> animation) {
             this.board = board;
             this.row = row;
             this.col = col;

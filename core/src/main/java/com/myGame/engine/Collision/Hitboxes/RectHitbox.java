@@ -1,4 +1,4 @@
-package com.myGame.engine.collision.Hitboxes;
+package com.myGame.engine.collision.hitboxes;
 
 public class RectHitbox extends Hitbox {
     private float width, height;

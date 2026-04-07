@@ -1,4 +1,4 @@
-package com.myGame.engine.collision.Hitboxes;
+package com.myGame.engine.collision.hitboxes;
 
 public class CircleHitbox extends Hitbox {
     private float radius;

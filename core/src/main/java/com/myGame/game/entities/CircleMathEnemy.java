@@ -2,7 +2,7 @@ package com.myGame.game.entities;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.myGame.engine.collision.Hitboxes.CircleHitbox;
+import com.myGame.engine.collision.hitboxes.CircleHitbox;
 
 public class CircleMathEnemy extends MathEnemy {
     public CircleMathEnemy(int row, int col, int value, float tileSize, float boardX, float boardY) {
