@@ -1,265 +1,204 @@
-# INF1009 Abstract Engine Project
+# AbstractEngineProject
 
-A libGDX simulation project organized into a reusable engine layer (`engine`) and simulation-specific layer (`simulation`).
+## Overview
 
-## Project Structure
+This project is a LibGDX-based Java game project with two main parts:
 
-- `core/src/main/java/com/myGame/engine/`
-  Engine abstractions: entities, managers, physics, scenes, and core contracts.
-- `core/src/main/java/com/myGame/simulation/`
-  Simulation/demo entities, scenes, input sources, and UI entities.
-- `core/src/main/java/com/myGame/GameEngine.java`
-  Application entry point and global scene/input/audio flow.
-- `assets/`
-  Textures and audio assets.
+- an abstract engine that provides reusable game-management systems
+- a game-specific implementation, Math Bomber, built on top of that engine
 
-## Innovative Enhancements
+## Portion 1: Abstract Engine
 
-- Scene cycle orchestration
-  - `SceneManager.registerCycleScene(scene)` + `SceneManager.cycleScene()`.
-  - Removes hardcoded scene toggling logic from `GameEngine`.
-- Layered pause overlay
-  - `pushScene(pause)` overlays pause on top of gameplay.
-  - Resume returns to the exact prior game state.
-- Unified scene update pipeline
-  - Base `Scene.update(...)`: movement -> collision -> entity lifecycle cleanup.
-- Generic system processing over `Collection<Entity>`
-  - `MovementManager` and `CollisionManager` operate on generic entity collections.
-- Decoupled hitbox geometry
-  - Hitboxes store only shape dimensions/radius.
-  - World position comes from `Entity`.
-- Input abstraction with pluggable sources
-  - `InputSource` implementations feed a unified `InputState`.
-  - Includes keyboard, mouse-direction, mouse-click, pause input, and custom key mapping.
-- Reusable UI entities
-  - `Button` and `VolumeSlider` extend `Entity` and follow the same lifecycle style.
-- Audio scene orchestration
-  - `AudioManager` handles SFX + background music switching and volume control.
-  - Demo scenes request their own background track on `onEnter()`.
-- Gameplay objective loop in DemoScene1
-  - Score/timer objective (catch 100 droplets), completion timing, and restart flow (`R`).
+The purpose of the abstract engine is to provide the core functionality of an interactive game or simulation through reusable components that support scalability and flexibility across different applications. In this project, it serves as the reusable framework that the Math Bomber game is built on top of.
 
-## OOP Principles in This Engine
+The engine follows a class-based architecture with clearly separated management systems, each handling a single concern. These concerns include scene management, entity management, movement, collision, input, audio, lifecycle handling, and animation. This structure keeps the engine understandable, modular, and reusable.
 
-### Abstraction
+At a high level, the overall system follows a layered architectural pattern:
 
-- `Entity` abstracts common position/lifecycle behavior.
-- `Scene` abstracts scene lifecycle and update pipeline.
-- `Hitbox` abstracts collision geometry type.
+- the `lwjgl3` launcher acts as the platform layer
+- `GameEngine` acts as the application coordination layer
+- the `engine` folder contains the reusable abstract engine layer
+- the `game` folder contains the game-specific implementation layer
+- the `game/mathbomber` folder acts as a domain-logic sublayer for the Math Bomber rules and state
 
-### Encapsulation
+Compared with the earlier phase of the project, the engine was improved for:
 
-- Core state is hidden behind methods (for example `Entity` position, active state).
-- `EntityManager` encapsulates entity storage and cleanup rules.
-- `AudioManager` encapsulates sound/music loading, switching, and volume logic.
+- clearer separation of concerns
+- looser coupling between components
+- stronger alignment with OOP and SOLID principles
+- better long-term scalability
+- generic animation handling
+- improved shared audio control
 
-### Inheritance
+Key engine improvements include:
 
-- `MovableTextureObject extends Entity` to reuse textured movable/collidable behavior.
-- Game entities specialize behavior by overriding `onCollision`, `draw`, or movement logic.
+- improved engine file structure by grouping classes by concern
+- moving collision geometry logic into concrete hitbox implementations
+- manager injection through scene constructors to reduce coupling
+- separate abstract scene types for static scenes and action scenes
+- addition of an animation management system
+- addition of a timed lifecycle management system for `iTickable` entities
+- shared music and SFX volume support across scenes
 
-### Composition
+The main engine systems are:
 
-- `Scene` composes managers (`EntityManager`, `MovementManager`, `CollisionManager`).
-- `GameEngine` composes scene instances and managers.
-- Scenes compose entities and input sources.
+- **Scene Management System**: manages scene lifecycle through a common `Scene` abstraction and supports scene stacking/cycling.
+- **Entity Management System**: maintains a shared registry of active entities and supports centralized update, rendering, and lifecycle control.
+- **Movement Management System**: updates all entities implementing `iMovable`.
+- **Collision Management System**: detects collisions generically through entity-owned hitboxes and `iCollidable`.
+- **Timed Lifecycle Management System**: updates time-based entities implementing `iTickable`.
+- **Input Management System**: translates concrete device input into a common `InputState`.
+- **Audio Management System**: centralizes audio registration, playback, and shared volume handling.
+- **Animation Management System**: updates generic animation behaviour through `iAnimatable`.
 
-### Interfaces and Abstract Classes
+The abstract engine is mainly located in:
 
-- Interfaces: `InputSource`, `iMovable`, `iCollidable`.
-- Abstract classes: `Entity`, `Scene`, `Hitbox`, `MovableTextureObject`.
+```text
+core/src/main/java/com/myGame/engine
+```
 
-### Polymorphism
+Engine subpackages include:
 
-- `EntityManager` draws mixed entity types via polymorphic `draw(...)`.
-- Physics managers process `Entity` collections and branch by interface contracts (`iMovable`, `iCollidable`).
-- `InputManager` updates different `InputSource` implementations through one interface.
+```text
+animation/
+audio/
+collision/
+collision/hitboxes/
+entity/
+input/
+lifecycle/
+movement/
+scene/
+```
 
-## Architecture Map (Inheritance / Implementation)
+## Portion 2: Math Bomber Game
 
-### Engine Core
+Math Bomber is a game-based learning application designed to support children’s mathematics education. It aims to address the lack of engagement in traditional mathematics learning by turning arithmetic practice into an interactive gameplay experience.
 
-- `iCollidable` (interface)
-- `iMovable` (interface)
-- `InputSource` (interface)
-- `InputState` (class)
+Instead of drilling questions in a repetitive format, the game presents mathematics questions during real-time gameplay. The player must move around the board, avoid threats, and bomb the enemy carrying the correct answer. This combines immediate feedback, time pressure, movement, and decision-making into a single gameplay loop.
 
-### Engine Entities
+The purpose of the game is to increase children’s engagement in mathematics learning by turning arithmetic practice into an interactive and motivating activity. Rather than presenting mathematics as isolated worksheets or drills, the game embeds question solving into movement, collision avoidance, and round-based progression.
 
-- `Entity` (abstract class)
-- `Hitbox` (abstract class)
-  - `RectHitbox extends Hitbox`
-  - `CircleHitbox extends Hitbox`
+The game supports:
 
-### Engine Scene Base
+- three game modes: Addition, Multiplication, and Mixed
+- three difficulty levels: Easy, Medium, and Hard
+- multiple input schemes: Arrow Keys, WASD, and Mouse Control
+- pause, resume, and end-game menu flows
+- game statistics at the end of a run
 
-- `Scene` (abstract class)
+Difficulty settings vary in map size, target score, number of enemies, enemy speed, question range, and time allowed to answer each question. This allows the same gameplay structure to support both easier entry-level play and more demanding play sessions.
 
-### Simulation Entities
+Gameplay flow:
 
-- `MovableTextureObject extends Entity implements iCollidable, iMovable` (abstract)
-  - `Bucket extends MovableTextureObject`
-  - `Droplet extends MovableTextureObject`
-  - `Wind extends MovableTextureObject`
-- `PlayerCircle extends Entity implements iCollidable, iMovable`
-- `RectangleWall extends Entity implements iCollidable`
-- `StaticTextureEntity extends Entity`
-
-### UI Entities
+- **Start Menu**: configure difficulty, controls, game mode, and volume.
+- **Main Gameplay**: answer arithmetic questions by bombing the correct target.
+- **Pause Menu**: resume or quit while adjusting volume.
+- **Ending Menu**: show win/lose result and game statistics.
 
-- `Button extends Entity`
-- `VolumeSlider extends Entity`
+During gameplay, each round presents a set of moving enemies, each labelled with a number. One of these numbers is the correct answer to the current question. The player must navigate the board and use a limited number of bombs to eliminate the correct target. When the correct enemy is hit, the score increases and the next round begins with a new question, new enemies, and refreshed timers.
 
-### Simulation Scenes
+The game also includes penalties to encourage careful play:
 
-- `DemoScene1 extends Scene`
-- `DemoScene2 extends Scene`
-- `PauseScene extends Scene`
+- running out of time decreases the score and resets the round
+- getting hit by an explosion decreases score and lives, then resets the round
+- colliding with an enemy decreases score and lives, then resets the round
+- running out of bombs decreases the score and resets the round
 
-### Input Sources
+The player wins by reaching the target score for the selected difficulty. The player loses by running out of lives or quitting from the pause menu. In both cases, the ending menu displays the result together with game statistics such as difficulty, total elapsed time, and score achieved.
 
-- `KeyboardInputSource implements InputSource`
-- `KeyboardArrowInputSource implements InputSource`
-- `KeyboardWASDInputSource implements InputSource`
-- `KeyboardCustomInputSource implements InputSource`
-- `MouseInputSource implements InputSource`
-- `MouseClickInputSource implements InputSource`
-- `PauseInputSource implements InputSource`
+The game-specific implementation is mainly located in:
 
-## Engine Layer
+```text
+core/src/main/java/com/myGame/game
+```
 
-### Core Contracts
+Game subpackages include:
 
-- `engine/core/iCollidable.java`
-  - `getHitbox`, `setHitbox`, `onCollision`
-- `engine/core/iMovable.java`
-  - `updatePosition(float dt)`
-- `engine/core/InputSource.java`
-  - `updateState(InputState state)`
-- `engine/core/InputState.java`
-  - movement/action/pause flags + pointer position/click state
+```text
+animation/
+entities/
+factory/
+factory/base/
+factory/concrete/
+factory/support/
+input/
+input/keyboard/
+input/mouse/
+mathbomber/
+mathbomber/board/
+mathbomber/configurations/
+mathbomber/configurations/enums/
+mathbomber/questions/
+mathbomber/round/
+mathbomber/systems/
+scenes/
+scenes/gameplay/
+scenes/menu/
+scenes/renderers/
+ui/
+```
 
-### Managers
-
-- `engine/managers/EntityManager.java`
-  - entity storage by name, draw passes, inactive cleanup
-- `engine/managers/InputManager.java`
-  - input source registration and per-id state updates
-- `engine/managers/SceneManager.java`
-  - stack-based scene control + cycle-scene support
-- `engine/managers/AudioManager.java`
-  - SFX/music loading, playback, track switching, and volume control
+Some notable game features described in the report are:
 
-### Physics
+- support for multiple game modes and difficulty levels
+- registry-based generic entity factory for repeated entity spawning
+- accessibility adjustment through reduced player hitbox size on easier difficulties
 
-- `engine/physics/MovementManager.java`
-  - `update(dt, Collection<Entity>)`
-- `engine/physics/CollisionDetector.java`
-  - shape overlap checks (`circle-circle`, `rect-rect`, `circle-rect`)
-- `engine/physics/CollisionManager.java`
-  - `update(Collection<Entity>)` and bidirectional collision dispatch
+The `game/mathbomber` subpackage contains the main domain logic of the game:
 
-### Scene Base
+- `board/`: tile-grid structure and board-related computations
+- `configurations/`: difficulty presets and game-level configuration/statistics
+- `questions/`: arithmetic question generation based on mode and difficulty
+- `round/`: progression state and rules for the active game session
+- `systems/`: gameplay systems such as bomb explosions, enemy steering, and tile occupancy rules
 
-- `engine/scenes/Scene.java`
-  - owns managers and shared update pipeline
-  - lifecycle hooks: `onEnter`, `onExit`, `dispose`
+## Launcher
 
-## Simulation Layer
+The desktop launcher is located in:
 
-### DemoScene1 Highlights
+```text
+lwjgl3/src/main/java/com/myGame/lwjgl3
+```
 
-- Background + bucket + wind + droplets.
-- Objective gameplay loop:
-  - catch 100 droplets
-  - timer runs until completion
-  - completion time shown
-  - droplets are removed on completion
-  - press `R` to restart
-- Droplet catch SFX via `AudioManager.playSound("water_droplet")`.
+Main launcher files:
 
-### DemoScene2 Highlights
+- `Lwjgl3Launcher.java`
+- `StartupHelper.java`
 
-- Two player circles + rectangle walls.
-- Arrow-controlled green player and mouse-driven yellow player.
-- Intense background music on scene entry.
+## How To Run The Program
 
-### PauseScene Highlights
+Prerequisites:
 
-- Overlay menu with:
-  - `RESUME` and `QUIT` buttons
-  - volume slider
-- Adjusts live music volume (keyboard or click-on-slider).
-- Keeps current music track active while paused.
+- Java 17 or later
+- a terminal opened at the project root:
 
-## Runtime Flow
+```text
+/Users/duckweed/Documents/School/Y1T2/INF1009/AbstractEngineProject
+```
 
-- `GameEngine.create()` initializes managers, loads audio assets, creates scenes.
-- Initial scene: `DemoScene1`.
-- `TAB`: cycles registered demo scenes.
-- `ESC` (outside pause): pushes `PauseScene`.
-- Only top scene updates/renders.
-- Scene objects are reused, so in-memory state persists across switches.
-
-## Controls
-
-### Global
-
-- `TAB` -> cycle demo scenes
-- `ESC` -> open pause scene
-
-### DemoScene1
-
-- Bucket: Arrow keys
-- Wind: WASD
-- Restart run: `R` (mapped to `action2`)
-
-### DemoScene2
-
-- Green circle: Arrow keys
-- Yellow circle: mouse-direction input
-
-### PauseScene
-
-- `UP` / `RIGHT`: increase volume
-- `DOWN` / `LEFT`: decrease volume
-- `ESC` (`action1`): resume
-- Mouse click:
-  - `RESUME` button -> resume
-  - `QUIT` button -> exit
-  - slider track -> set volume by click position
-
-## Current Limitations (Design Tradeoffs)
-
-- Scene classes still carry multiple responsibilities
-  - Scene setup, per-frame game rules, input wiring, and HUD rendering are in the same classes.
-- Collision extensibility
-  - `CollisionDetector` uses explicit type checks; adding new shape types requires editing detector logic.
-- `iCollidable` breadth
-  - `setHitbox(...)` is required for all collidables even if some should be immutable.
-- Input manager keying
-  - `InputManager` uses integer IDs; this works but can become fragile as projects scale.
-- Audio manager scope
-  - `AudioManager` currently handles both SFX and music (acceptable here, but split managers may scale better).
-- Engine lacks dedicated service boundaries for HUD/game rules
-  - No separate gameplay systems layer yet (for example score service, round controller, HUD renderer).
-
-## Build and Run
-
-### Prerequisites
-
-- Java 17+
-
-### Run desktop app
-
-From project root:
+Run the desktop game:
 
 ```bash
-./gradlew lwjgl3:run
+./gradlew :lwjgl3:run
 ```
 
-Windows PowerShell:
+Compile only:
 
-```powershell
-./gradlew.bat lwjgl3:run
+```bash
+./gradlew :core:compileJava
 ```
+
+Clean and rebuild:
+
+```bash
+./gradlew clean :lwjgl3:run
+```
+
+Use a clean rebuild if packages or folders were renamed and the runtime behaves strangely.
+
+## Basic Usage Guide
+
+Launch the game with the desktop runner. In the start menu, choose a difficulty, control scheme, question mode, and volume settings. Click `Start` to begin.
+
+During gameplay, move using the selected control scheme, place bombs to eliminate the enemy with the correct answer, and avoid enemy collisions or self-damage from explosions. Use the pause menu to resume or quit. The ending screen shows the final win/lose result and game statistics.
